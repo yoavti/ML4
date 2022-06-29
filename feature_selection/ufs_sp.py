@@ -84,4 +84,4 @@ def ufs_sp(X, alpha, beta, k, mu):
         if convergence(new_obj, obj):
             break
         obj = new_obj
-    return W
+    return np.apply_along_axis(lambda W_i: (W_i ** 2).sum(), 0, W)
