@@ -18,11 +18,12 @@ def markov_coefficient(j, X, X_C, gamma):
 def lfs(X, y=None, *, gamma):
     X, y = check_X_y(X, y)
     n, p = X.shape
-    X_C = {y_val: [] for y_val in np.unique()}
+    X_C = {y_val: [] for y_val in np.unique(y)}
     for X_i, y_i in zip(X, y):
         X_C[y_i].append(X_i)
     X_C = {y_val: np.array(observations) for y_val, observations in X_C.items()}
-    theta = np.apply_along_axis(partial(markov_coefficient, X=X, X_C=X_C, gamma=gamma), 1, np.arange(p))
+    theta = [markov_coefficient(j, X, X_C, gamma) for j in range(p)]
+    theta = np.array(theta)
     theta += theta.min()
     theta /= theta.sum()
     return theta
