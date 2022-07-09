@@ -14,7 +14,7 @@ def rel_change(new, old):
     return (np.linalg.norm(new - old) ** 2) / old
 
 
-def convergence(new, old, epsilon=1e-1):
+def convergence(new, old, epsilon=1e-5):
     return rel_change(new, old) <= epsilon
 
 
