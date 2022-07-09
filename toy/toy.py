@@ -1,4 +1,8 @@
 import pandas as pd
+from feature_selection import lfs, ufs_sp
+from sklearnex import patch_sklearn
+patch_sklearn()
+from sklearn.feature_selection import SelectKBest
 
 
 FILENAME = 'SPECTF.train'
@@ -12,3 +16,9 @@ def split_X_y(df, column):
 
 def load_toy(path=FILENAME):
     return split_X_y(pd.read_csv(path), '1')
+
+
+if __name__ == '__main__':
+    X, y = load_toy()
+    alpha = lfs(X, y, gamma=-1)
+    print(alpha)
