@@ -21,4 +21,4 @@ def load_toy(path=FILENAME):
 if __name__ == '__main__':
     X, y = load_toy()
     alpha = lfs(X, y, gamma=-1)
-    print(alpha)
+    w = ufs_sp(X.to_numpy(), 1, 2, 100, 100)
