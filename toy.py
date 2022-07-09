@@ -1,7 +1,5 @@
 from feature_selection import lfs, ufs_sp
 from data.toy.load import load_toy
-from sklearnex import patch_sklearn
-patch_sklearn()
 
 
 def main():

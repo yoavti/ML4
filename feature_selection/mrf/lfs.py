@@ -1,4 +1,3 @@
-from sklearn.utils import check_X_y
 from functools import partial
 import numpy as np
 
@@ -16,7 +15,6 @@ def markov_coefficient(j, X, X_C, gamma):
 
 
 def lfs(X, y=None, *, gamma):
-    X, y = check_X_y(X, y)
     n, p = X.shape
     X_C = {y_val: [] for y_val in np.unique(y)}
     for X_i, y_i in zip(X, y):
