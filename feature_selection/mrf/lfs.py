@@ -21,6 +21,4 @@ def lfs(X, y=None, *, gamma):
         X_C[y_i].append(X_i)
     X_C = {y_val: np.array(observations) for y_val, observations in X_C.items()}
     theta = np.vectorize(partial(markov_coefficient, X=X, X_C=X_C, gamma=gamma))(np.arange(p))
-    theta += theta.min()
-    theta /= theta.sum()
     return theta

@@ -91,6 +91,4 @@ def ufs_sp(X, alpha, mu, max_steps, max_steps_W):
             break
         obj = new_obj
     w = l_2_1_norm_vec(W)
-    w += w.min()
-    w /= w.sum()
     return w
