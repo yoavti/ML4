@@ -7,19 +7,19 @@ def l_2_1_norm_vec(X):
 
 
 def l_2_1_norm(X):
-    l_2_1_norm_vec(X).sum()
+    return l_2_1_norm_vec(X).sum()
 
 
 def rel_change(new, old):
     return (np.linalg.norm(new - old) ** 2) / old
 
 
-def convergence(new, old, epsilon=1e-5):
+def convergence(new, old, epsilon=1e-1):
     return rel_change(new, old) <= epsilon
 
 
 def calc_L(X, W):
-    return np.apply_along_axis(lambda X_i: np.linalg.norm(X_i - X_i @ W), 0, X)
+    return np.apply_along_axis(lambda X_i: np.linalg.norm(X_i - X_i @ W), 1, X)
 
 
 def calc_single_v(L_i, beta, k):
@@ -31,7 +31,7 @@ def calc_single_v(L_i, beta, k):
 
 
 def update_v(L, beta, k):
-    return np.apply_along_axis(partial(calc_single_v, beta=beta, k=k), 0, L)
+    return np.vectorize(partial(calc_single_v, beta=beta, k=k))(L)
 
 
 def calc_G(X, v):
@@ -56,35 +56,30 @@ def obj_v(v, L, beta, k):
     return (v * L).sum() + ((beta ** 2) / (v + beta * k)).sum()
 
 
-def solve_W(X, v, alpha):
+def solve_W(X, v, alpha, W_steps):
     n, d = X.shape
     G = calc_G(X, v)
     D = np.diag(np.random.randn(d))
     W = np.random.randn(d, d)
-    obj = obj_W(W, G, alpha)
-    while True:
+    for _ in range(W_steps):
         W = update_W(G, D, alpha)
         D = update_D(W)
-        new_obj = obj_W(W, G, alpha)
-        if convergence(new_obj, obj):
-            break
-        obj = new_obj
     return W
 
 
-def ufs_sp(X, alpha, beta, k, mu):
+def ufs_sp(X, alpha, mu, v_steps, W_steps):
     n, d = X.shape
     W = np.random.randn(d, d)
-    v = np.random.randn(d)
     L = calc_L(X, W)
-    obj = obj_v(v, L, beta, k)
-    while True:
+    Lm = L.max()
+    beta = 2 * Lm ** 2
+    k = 1 / beta
+    for _ in range(v_steps):
         v = update_v(L, beta, k)
-        W = solve_W(X, v, alpha)
+        W = solve_W(X, v, alpha, W_steps)
         k /= mu
         L = calc_L(X, W)
-        new_obj = obj_v(v, L, beta, k)
-        if convergence(new_obj, obj):
-            break
-        obj = new_obj
-    return l_2_1_norm_vec(W)
+    w = l_2_1_norm_vec(W)
+    w += w.min()
+    w /= w.sum()
+    return w
