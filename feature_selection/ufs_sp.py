@@ -56,29 +56,40 @@ def obj_v(v, L, beta, k):
     return (v * L).sum() + ((beta ** 2) / (v + beta * k)).sum()
 
 
-def solve_W(X, v, alpha, W_steps):
+def solve_W(X, v, alpha, max_steps_W):
     n, d = X.shape
     G = calc_G(X, v)
     D = np.diag(np.random.randn(d))
     W = np.random.randn(d, d)
-    for _ in range(W_steps):
+    obj = obj_W(W, G, alpha)
+    for _ in range(max_steps_W):
         W = update_W(G, D, alpha)
         D = update_D(W)
+        new_obj = obj_W(W, G, alpha)
+        if convergence(new_obj, obj):
+            break
+        obj = new_obj
     return W
 
 
-def ufs_sp(X, alpha, mu, v_steps, W_steps):
+def ufs_sp(X, alpha, mu, max_steps, max_steps_W):
     n, d = X.shape
     W = np.random.randn(d, d)
+    v = np.random.rand(n)
     L = calc_L(X, W)
     Lm = L.max()
     beta = 2 * Lm ** 2
     k = 1 / beta
-    for _ in range(v_steps):
+    obj = obj_v(v, L, beta, k)
+    for _ in range(max_steps):
         v = update_v(L, beta, k)
-        W = solve_W(X, v, alpha, W_steps)
+        W = solve_W(X, v, alpha, max_steps_W)
         k /= mu
         L = calc_L(X, W)
+        new_obj = obj_v(v, L, beta, k)
+        if convergence(new_obj, obj):
+            break
+        obj = new_obj
     w = l_2_1_norm_vec(W)
     w += w.min()
     w /= w.sum()
