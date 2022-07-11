@@ -1,6 +1,4 @@
 import numpy as np
-from sklearnex import patch_sklearn
-patch_sklearn()
 from skfeature.function.information_theoretical_based.MRMR import mrmr
 
 

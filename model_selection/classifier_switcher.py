@@ -1,5 +1,3 @@
-from sklearnex import patch_sklearn
-patch_sklearn()
 from sklearn.base import BaseEstimator
 from sklearn.linear_model import SGDClassifier
 
