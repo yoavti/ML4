@@ -1,5 +1,6 @@
 from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
 from sklearn.linear_model import SGDClassifier
+from sklearn.preprocessing import StandardScaler
 
 
 class ClassifierSwitcher(BaseEstimator, ClassifierMixin):
@@ -18,7 +19,7 @@ class ClassifierSwitcher(BaseEstimator, ClassifierMixin):
 
 
 class TransformerSwitcher(BaseEstimator, TransformerMixin):
-    def __init__(self, transformer):
+    def __init__(self, transformer=StandardScaler()):
         self.transformer = transformer
 
     def fit(self, X, y=None, **kwargs):
