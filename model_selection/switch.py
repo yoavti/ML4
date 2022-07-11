@@ -1,8 +1,8 @@
-from sklearn.base import ClassifierMixin, TransformerMixin
+from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
 from sklearn.linear_model import SGDClassifier
 
 
-class ClassifierSwitcher(ClassifierMixin):
+class ClassifierSwitcher(BaseEstimator, ClassifierMixin):
     def __init__(self, estimator=SGDClassifier()):
         self.estimator = estimator
 
@@ -17,7 +17,7 @@ class ClassifierSwitcher(ClassifierMixin):
         return self.estimator.predict_proba(X)
 
 
-class TransformerSwitcher(TransformerMixin):
+class TransformerSwitcher(BaseEstimator, TransformerMixin):
     def __init__(self, transformer):
         self.transformer = transformer
 
