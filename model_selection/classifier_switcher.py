@@ -4,7 +4,7 @@ from sklearn.base import BaseEstimator
 from sklearn.linear_model import SGDClassifier
 
 
-class ClfSwitcher(BaseEstimator):
+class ClassifierSwitcher(BaseEstimator):
     def __init__(self, estimator=SGDClassifier()):
         self.estimator = estimator
 
