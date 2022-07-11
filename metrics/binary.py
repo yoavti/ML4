@@ -1,10 +1,9 @@
 import numpy as np
 
 
-def binary_metric(metric, y_true, y_pred):
-    vals = []
-    for y_val in np.unique(np.concatenate((y_true, y_pred))):
-        y_true_bin = y_true == y_val
-        y_pred_bin = y_pred == y_val
-        vals.append(metric(y_true_bin, y_pred_bin))
-    return sum(vals) / len(vals)
+def binary_metric(metric):
+    def averaged(y_true, y_pred):
+        def label_comp(label):
+            return metric(y_true == label, y_pred == label)
+        return np.mean(np.vectorize(label_comp)(np.unique(np.concatenate((y_true, y_pred)))))
+    return averaged
