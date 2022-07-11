@@ -6,6 +6,8 @@ def binary_metric(metric):
         def label_metric(label):
             y_true_bin = y_true == label
             y_pred_bin = y_pred == label
+            y_true_bin = y_true_bin.astype(int)
+            y_pred_bin = y_pred_bin.astype(int)
             if len(np.unique(y_true_bin)) != 2:
                 return 1
             return metric(y_true_bin, y_pred_bin)
