@@ -5,7 +5,7 @@ from data.toy.load import load_toy
 def main():
     X, y = load_toy()
     alpha = lfs(X, y, gamma=-1)
-    w = ufs_sp(X.to_numpy(), 1e3, 2, 20, 20)
+    w = ufs_sp(X.to_numpy(), 1e3, 1.4, 20, 20)
 
 
 if __name__ == '__main__':
