@@ -72,7 +72,7 @@ def solve_W(X, v, alpha, max_steps_W):
     return W
 
 
-def ufs_sp(X, alpha, mu, max_steps, max_steps_W):
+def ufs_sp(X, y, alpha=1e3, mu=-1.4, max_steps=20, max_steps_W=20):
     n, d = X.shape
     W = np.random.randn(d, d)
     v = np.random.rand(n)

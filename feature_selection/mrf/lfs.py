@@ -14,7 +14,7 @@ def markov_coefficient(j, X, X_C, gamma):
     return first + second + third
 
 
-def lfs(X, y=None, *, gamma):
+def lfs(X, y, gamma=-1):
     n, p = X.shape
     X_C = {y_val: [] for y_val in np.unique(y)}
     for X_i, y_i in zip(X, y):
