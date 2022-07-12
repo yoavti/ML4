@@ -1,1 +1,1 @@
-from .load import load_arff
+from .load import arff_loader
