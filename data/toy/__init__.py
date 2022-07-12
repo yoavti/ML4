@@ -1,1 +1,1 @@
-from .load import load_toy
+from .load import toy_loader

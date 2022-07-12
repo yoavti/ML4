@@ -1,14 +1,20 @@
 import pandas as pd
 import os
-from data.utils import split_X_y
+from data.utils import Loader, split_X_y
 
 
-DIR = os.path.join('data', 'toy')
-FILENAME = 'SPECTF.train'
+class ToyLoader(Loader):
+    def __init__(self, filename):
+        self._filename = filename
+
+    def _load(self, name, parent=''):
+        path = os.path.join(parent, 'toy', self._filename)
+        df = pd.read_csv(path, header=None)
+        X, y = split_X_y(df, 0)
+        return X, y
+
+    def is_dataset_available(self, name, parent=''):
+        return name == 'toy'
 
 
-def load_toy(name=FILENAME):
-    path = os.path.join(DIR, name)
-    df = pd.read_csv(path, header=None)
-    X, y = split_X_y(df, 0)
-    return X, y
+toy_loader = ToyLoader('SPECTF.train')
