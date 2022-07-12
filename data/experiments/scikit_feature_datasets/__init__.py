@@ -1,1 +1,1 @@
-from .load import load_scikit_feature
+from .load import scikit_feature_loader
