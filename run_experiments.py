@@ -80,7 +80,6 @@ def my_metrics():
 
 def run_experiment(dataset):
     X, y = data_loader.load(dataset)
-    # X, y = load_arff(dataset)
     y = LabelEncoder().fit_transform(y)
 
     n, d = X.shape
