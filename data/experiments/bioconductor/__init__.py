@@ -1,1 +1,1 @@
-from .load import load_bioconductor
+from .load import bioconductor_loader
