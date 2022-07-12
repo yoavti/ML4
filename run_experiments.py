@@ -1,7 +1,9 @@
 from sklearnex import patch_sklearn
 patch_sklearn()
 
-import joblib
+import json
+
+import pandas as pd
 
 from argparse import ArgumentParser
 
@@ -95,7 +97,12 @@ def run_experiment(dataset):
 
     gscv = GridSearchCV(pipeline, parameters, scoring=my_metrics(), refit='ROC_AUC', cv=cv)
     gscv.fit(X, y)
-    joblib.dump(gscv.cv_results_, f'{dataset}.pkl')
+
+    with open(f'{dataset}.json', 'w+') as f:
+        json.dump({'index': int(gscv.best_index_), 'score': gscv.best_score_}, f)
+    cv_results = gscv.cv_results_
+    cv_results = pd.DataFrame(cv_results)
+    cv_results.to_csv(f'{dataset}.csv')
 
 
 if __name__ == '__main__':
