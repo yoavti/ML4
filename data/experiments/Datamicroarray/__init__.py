@@ -1,1 +1,1 @@
-from .load import load_datamicroarray
+from .load import datamicroarray_loader

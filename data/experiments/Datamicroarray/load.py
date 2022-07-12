@@ -1,10 +1,15 @@
 import pandas as pd
 import os
+from data.utils import FileLoader
 
 
-DIR = os.path.join('data', 'experiments', 'Datamicroarray')
-selected_datasets = {'alon', 'borovecki', 'burczynski', 'chiaretti', 'chin'}
+class DatamicroarrayLoader(FileLoader):
+    def _load(self, name, parent=''):
+        purposes = ['inputs', 'outputs']
+        paths = [os.path.join(parent, 'Datamicroarray', name, f'{purpose}.csv') for purpose in purposes]
+        dfs = [pd.read_csv(path, header=None) for path in paths]
+        return dfs
 
 
-def load_datamicroarray(name):
-    return [pd.read_csv(os.path.join(DIR, name, f'{purpose}.csv'), header=None) for purpose in ['inputs', 'outputs']]
+datamicroarray_loader = DatamicroarrayLoader({name: None
+                                              for name in ['alon', 'borovecki', 'burczynski', 'chiaretti', 'chin']})
