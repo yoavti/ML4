@@ -36,13 +36,6 @@ parser = ArgumentParser()
 parser.add_argument('dataset')
 args = parser.parse_args()
 
-pipeline = Pipeline([('imputer', SimpleImputer()),
-                     ('var_thresh', VarianceThreshold()),
-                     ('transform', PowerTransformer()),
-                     ('fs', TransformerSwitcher()),
-                     ('clf', ClassifierSwitcher(SVC()))],
-                    memory='pipeline')
-
 
 ks = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 50, 100]
 classifiers = [KNeighborsClassifier(), GaussianNB(), LogisticRegression(), SVC(), RandomForestClassifier()]
@@ -81,6 +74,13 @@ def my_metrics():
 
 
 def run_experiment(dataset):
+    pipeline = Pipeline([('imputer', SimpleImputer()),
+                         ('var_thresh', VarianceThreshold()),
+                         ('transform', PowerTransformer()),
+                         ('fs', TransformerSwitcher()),
+                         ('clf', ClassifierSwitcher(SVC()))],
+                        memory=dataset)
+
     X, y = data_loader.load(dataset)
     y = LabelEncoder().fit_transform(y)
 
