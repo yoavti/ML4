@@ -106,4 +106,4 @@ def run_experiment(dataset):
 
 
 if __name__ == '__main__':
-    run_experiment(args.dataset)
+    run_experiment(args.dataset.strip())
