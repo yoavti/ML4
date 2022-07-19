@@ -5,6 +5,8 @@ import json
 
 import pandas as pd
 
+from pprint import PrettyPrinter
+
 from argparse import ArgumentParser
 
 from model_selection import ClassifierSwitcher, TransformerSwitcher
@@ -36,6 +38,7 @@ parser = ArgumentParser()
 parser.add_argument('dataset')
 args = parser.parse_args()
 
+pp = PrettyPrinter()
 
 ks = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 50, 100]
 classifiers = [KNeighborsClassifier(), GaussianNB(), LogisticRegression(), SVC(), RandomForestClassifier()]
@@ -74,23 +77,26 @@ def my_metrics():
 
 
 def run_experiment(dataset):
-    pipeline = Pipeline([('imputer', SimpleImputer()),
-                         ('var_thresh', VarianceThreshold()),
-                         ('transform', PowerTransformer()),
-                         ('fs', TransformerSwitcher()),
-                         ('clf', ClassifierSwitcher(SVC()))],
-                        memory=dataset)
-
     X, y = data_loader.load(dataset)
     y = LabelEncoder().fit_transform(y)
 
     n, d = X.shape
 
-    if n < 50:
+    pipeline = Pipeline([('imputer', SimpleImputer()),
+                         ('var_thresh', VarianceThreshold()),
+                         ('transform', PowerTransformer()),
+                         ('ff', SelectKBest(k='all' if n < 1000 else 1000)),
+                         ('fs', TransformerSwitcher()),
+                         ('clf', ClassifierSwitcher(SVC()))],
+                        memory=dataset)
+
+    real_n = min(n, 1000)
+
+    if real_n < 50:
         cv = LeavePOut(2)
-    elif 50 <= n < 100:
+    elif 50 <= real_n < 100:
         cv = LeaveOneOut()
-    elif 100 <= n < 1000:
+    elif 100 <= real_n < 1000:
         cv = KFold(10, shuffle=True)
     else:
         cv = KFold(5, shuffle=True)
@@ -98,9 +104,12 @@ def run_experiment(dataset):
     gscv = GridSearchCV(pipeline, parameters, scoring=my_metrics(), refit='ROC_AUC', cv=cv)
     gscv.fit(X, y)
 
+    best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
+    pp.pprint(best)
     with open(f'{dataset}.json', 'w+') as f:
-        json.dump({'index': int(gscv.best_index_), 'score': gscv.best_score_}, f)
+        json.dump(best, f)
     cv_results = gscv.cv_results_
+    pp.pprint(cv_results)
     cv_results = pd.DataFrame(cv_results)
     cv_results.to_csv(f'{dataset}.csv')
 
