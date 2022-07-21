@@ -5,7 +5,6 @@ import json
 import os
 
 from time import time
-from argparse import ArgumentParser
 from pprint import PrettyPrinter
 
 import pandas as pd
@@ -14,16 +13,13 @@ import numpy as np
 from data import data_loader
 from feature_selection import lfs, ufs_sp, mrmr_score, relief_f
 from experiments.utils.cv import cv_method
+from experiments.utils.argument_parser import dataset
 
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, PowerTransformer
 from sklearn.feature_selection import VarianceThreshold, SelectKBest, SelectFdr
 
 pp = PrettyPrinter()
-
-parser = ArgumentParser()
-parser.add_argument('dataset')
-args = parser.parse_args()
 
 
 def preprocess(X, y):
@@ -41,12 +37,12 @@ def preprocess(X, y):
 ks = [10]
 
 
-def run_experiment(dataset):
+def run_experiment(ds):
     times = []
     all_selected_features = []
     all_selected_features_scores = []
 
-    X, y = data_loader.load(dataset)
+    X, y = data_loader.load(ds)
 
     X, y = preprocess(X, y)
 
@@ -97,19 +93,19 @@ def run_experiment(dataset):
     return times, all_selected_features, all_selected_features_scores
 
 
-def save_dict(dataset, name, d):
+def save_dict(ds, name, d):
     print(name)
     pp.pprint(d)
-    with open(os.path.join('../results', f'{dataset}_{name}.json'), 'w+') as f:
+    with open(os.path.join('../results', f'{ds}_{name}.json'), 'w+') as f:
         json.dump(d, f)
 
 
-def main(dataset):
-    times, selected_features, selected_features_scores = run_experiment(dataset)
-    save_dict(dataset, 'time', time)
-    save_dict(dataset, 'selected_features', selected_features)
-    save_dict(dataset, 'selected_features_scores', selected_features_scores)
+def main(ds):
+    times, selected_features, selected_features_scores = run_experiment(ds)
+    save_dict(ds, 'time', time)
+    save_dict(ds, 'selected_features', selected_features)
+    save_dict(ds, 'selected_features_scores', selected_features_scores)
 
 
 if __name__ == '__main__':
-    main(args.dataset.strip())
+    main(dataset)

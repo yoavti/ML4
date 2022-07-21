@@ -8,7 +8,8 @@ import pandas as pd
 
 from pprint import PrettyPrinter
 from time import time
-from argparse import ArgumentParser
+
+from experiments.utils.argument_parser import dataset
 
 from model_selection import ClassifierSwitcher, TransformerSwitcher
 
@@ -32,10 +33,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
 from experiments.utils.metrics import get_metrics
-
-parser = ArgumentParser()
-parser.add_argument('dataset')
-args = parser.parse_args()
 
 pp = PrettyPrinter()
 
@@ -61,8 +58,8 @@ parameters = [
 ]
 
 
-def run_experiment(dataset):
-    X, y = data_loader.load(dataset)
+def run_experiment(ds):
+    X, y = data_loader.load(ds)
     y = LabelEncoder().fit_transform(y)
 
     n, d = X.shape
@@ -73,7 +70,7 @@ def run_experiment(dataset):
                          ('ff', SelectKBest(k='all' if n < 1000 else 1000)),
                          ('fs', TransformerSwitcher()),
                          ('clf', ClassifierSwitcher(SVC()))],
-                        memory=os.path.join('pipeline_memory', dataset))
+                        memory=os.path.join('pipeline_memory', ds))
 
     real_n = min(n, 1000)
 
@@ -82,15 +79,15 @@ def run_experiment(dataset):
 
     best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
     pp.pprint(best)
-    with open(os.path.join('../results', f'{dataset}.json'), 'w+') as f:
+    with open(os.path.join('../results', f'{ds}.json'), 'w+') as f:
         json.dump(best, f)
     cv_results = gscv.cv_results_
     pp.pprint(cv_results)
     cv_results = pd.DataFrame(cv_results)
-    cv_results.to_csv(os.path.join('../results', f'{dataset}.csv'))
+    cv_results.to_csv(os.path.join('../results', f'{ds}.csv'))
 
 
 if __name__ == '__main__':
     start = time()
-    run_experiment(args.dataset.strip())
+    run_experiment(dataset)
     print(time() - start)
