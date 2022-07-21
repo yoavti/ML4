@@ -72,6 +72,16 @@ def my_metrics():
     return scorers
 
 
+def cv_method(n):
+    if n < 50:
+        return LeavePOut(2)
+    elif 50 <= n < 100:
+        return LeaveOneOut()
+    elif 100 <= n < 1000:
+        return KFold(10, shuffle=True)
+    return KFold(5, shuffle=True)
+
+
 def run_experiment(dataset):
     X, y = data_loader.load(dataset)
     y = LabelEncoder().fit_transform(y)
@@ -88,14 +98,7 @@ def run_experiment(dataset):
 
     real_n = min(n, 1000)
 
-    if real_n < 50:
-        cv = LeavePOut(2)
-    elif 50 <= real_n < 100:
-        cv = LeaveOneOut()
-    elif 100 <= real_n < 1000:
-        cv = KFold(10, shuffle=True)
-    else:
-        cv = KFold(5, shuffle=True)
+    cv = cv_method(real_n)
 
     gscv = GridSearchCV(pipeline, parameters, scoring=my_metrics(), refit='ROC_AUC', cv=cv)
     gscv.fit(X, y)
