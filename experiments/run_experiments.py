@@ -23,26 +23,22 @@ from sklearn.feature_selection import VarianceThreshold
 from sklearn.model_selection import GridSearchCV
 from experiments.utils.cv import cv_method
 
-from feature_selection import lfs, ufs_sp, mrmr_score, relief_f
-from sklearn.feature_selection import SelectKBest, SelectFdr, RFE
+from sklearn.feature_selection import SelectKBest, SelectFdr
+# from sklearn.feature_selection import RFE
 
-from sklearn.svm import SVR, SVC
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.naive_bayes import GaussianNB
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+# from sklearn.svm import SVR
 
 from experiments.utils.metrics import get_metrics
 
+from experiments.utils.parameters import score_funcs, ks, classifiers
+
 pp = PrettyPrinter()
 
-# ks = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 50, 100]
-ks = [10]
-classifiers = [KNeighborsClassifier(), GaussianNB(), LogisticRegression(), SVC(), RandomForestClassifier()]
 parameters = [
     {
         'fs__transformer': [SelectKBest()],
-        'fs__transformer__score_func': [lfs, ufs_sp, mrmr_score, relief_f],
+        'fs__transformer__score_func': score_funcs,
         'fs__transformer__k': ks,
         'clf__estimator': classifiers,
     },

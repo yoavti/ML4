@@ -11,9 +11,9 @@ import pandas as pd
 import numpy as np
 
 from data import data_loader
-from feature_selection import lfs, ufs_sp, mrmr_score, relief_f
 from experiments.utils.cv import cv_method
 from experiments.utils.argument_parser import dataset
+from experiments.utils.parameters import ks, score_funcs
 
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, PowerTransformer
@@ -34,9 +34,6 @@ def preprocess(X, y):
     return X, y
 
 
-ks = [10]
-
-
 def run_experiment(ds):
     times = []
     all_selected_features = []
@@ -53,7 +50,7 @@ def run_experiment(ds):
         columns = X.columns
     columns = np.array(columns)
 
-    score_funcs = {'lfs': lfs, 'ufs_sp': ufs_sp, 'mrmr_score': mrmr_score, 'relief_f': relief_f}
+    named_score_funcs = {score_func.__name__: score_func for score_func in score_funcs}
 
     cv = cv_method(n)
 
@@ -66,7 +63,7 @@ def run_experiment(ds):
         X_train, X_test = X_[train_index], X_[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
-        for name, score_func in score_funcs.items():
+        for name, score_func in named_score_funcs.items():
             all_selected_features[i][name] = {}
             all_selected_features_scores[i][name] = {}
 
