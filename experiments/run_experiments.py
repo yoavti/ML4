@@ -105,12 +105,12 @@ def run_experiment(dataset):
 
     best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
     pp.pprint(best)
-    with open(os.path.join('results', f'{dataset}.json'), 'w+') as f:
+    with open(os.path.join('../results', f'{dataset}.json'), 'w+') as f:
         json.dump(best, f)
     cv_results = gscv.cv_results_
     pp.pprint(cv_results)
     cv_results = pd.DataFrame(cv_results)
-    cv_results.to_csv(os.path.join('results', f'{dataset}.csv'))
+    cv_results.to_csv(os.path.join('../results', f'{dataset}.csv'))
 
 
 if __name__ == '__main__':

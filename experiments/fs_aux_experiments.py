@@ -110,7 +110,7 @@ def run_experiment(dataset):
 def save_dict(dataset, name, d):
     print(name)
     pp.pprint(d)
-    with open(os.path.join('results', f'{dataset}_{name}.json'), 'w+') as f:
+    with open(os.path.join('../results', f'{dataset}_{name}.json'), 'w+') as f:
         json.dump(d, f)
 
 
