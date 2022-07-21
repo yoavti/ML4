@@ -20,7 +20,7 @@ from sklearn.preprocessing import LabelEncoder, PowerTransformer
 from sklearn.feature_selection import VarianceThreshold
 
 from sklearn.model_selection import GridSearchCV
-from sklearn.model_selection import LeaveOneOut, LeavePOut, KFold
+from experiments.utils.cv import cv_method
 
 from feature_selection import lfs, ufs_sp, mrmr_score, relief_f
 from sklearn.feature_selection import SelectKBest, SelectFdr, RFE
@@ -70,16 +70,6 @@ def my_metrics():
     all_metrics = regular_metrics | binary_metrics
     scorers = {name: make_scorer(metric) for name, metric in all_metrics.items()}
     return scorers
-
-
-def cv_method(n):
-    if n < 50:
-        return LeavePOut(2)
-    elif 50 <= n < 100:
-        return LeaveOneOut()
-    elif 100 <= n < 1000:
-        return KFold(10, shuffle=True)
-    return KFold(5, shuffle=True)
 
 
 def run_experiment(dataset):

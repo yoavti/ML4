@@ -13,27 +13,17 @@ import numpy as np
 
 from data import data_loader
 from feature_selection import lfs, ufs_sp, mrmr_score, relief_f
+from experiments.utils.cv import cv_method
 
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, PowerTransformer
 from sklearn.feature_selection import VarianceThreshold, SelectKBest, SelectFdr
-from sklearn.model_selection import LeaveOneOut, LeavePOut, KFold
 
 pp = PrettyPrinter()
 
 parser = ArgumentParser()
 parser.add_argument('dataset')
 args = parser.parse_args()
-
-
-def cv_method(n):
-    if n < 50:
-        return LeavePOut(2)
-    elif 50 <= n < 100:
-        return LeaveOneOut()
-    elif 100 <= n < 1000:
-        return KFold(10, shuffle=True)
-    return KFold(5, shuffle=True)
 
 
 def preprocess(X, y):
