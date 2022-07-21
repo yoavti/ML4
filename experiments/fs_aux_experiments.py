@@ -48,16 +48,15 @@ def run_experiment(ds):
 
     named_score_funcs = {score_func.__name__: score_func for score_func in score_funcs}
 
-    cv = cv_method(n)
-
-    for i, (train_index, test_index) in enumerate(cv.split(X, y)):
+    for i, (train_index, test_index) in enumerate(cv_method(n).split(X, y)):
         times.append({})
         all_selected_features.append({})
         all_selected_features_scores.append({})
 
-        X_ = np.array(X)
-        X_train, X_test = X_[train_index], X_[test_index]
-        y_train, y_test = y[train_index], y[test_index]
+        X_np = np.array(X)
+        y_np = np.array(y)
+        X_train, X_test = X_np[train_index], X_np[test_index]
+        y_train, y_test = y_np[train_index], y_np[test_index]
 
         for name, score_func in named_score_funcs.items():
             all_selected_features[i][name] = {}

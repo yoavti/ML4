@@ -9,28 +9,22 @@ import pandas as pd
 from pprint import PrettyPrinter
 from time import time
 
-from experiments.utils.argument_parser import dataset
-
 from model_selection import ClassifierSwitcher, TransformerSwitcher
-
 from data import data_loader
+
+from experiments.utils.preprocess import preprocess_steps
+from experiments.utils.cv import cv_method
+from experiments.utils.metrics import get_metrics
+from experiments.utils.parameters import score_funcs, ks, classifiers
+from experiments.utils.argument_parser import dataset
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
-from experiments.utils.preprocess import preprocess_steps
-
 from sklearn.model_selection import GridSearchCV
-from experiments.utils.cv import cv_method
-
 from sklearn.feature_selection import SelectKBest, SelectFdr
 # from sklearn.feature_selection import RFE
-
 from sklearn.svm import SVC
 # from sklearn.svm import SVR
-
-from experiments.utils.metrics import get_metrics
-
-from experiments.utils.parameters import score_funcs, ks, classifiers
 
 pp = PrettyPrinter()
 
@@ -62,9 +56,7 @@ def run_experiment(ds):
     pipeline = Pipeline(preprocess_steps(n) + [('fs', TransformerSwitcher()), ('clf', ClassifierSwitcher(SVC()))],
                         memory=os.path.join('pipeline_memory', ds))
 
-    real_n = min(n, 1000)
-
-    gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(), refit='ROC_AUC', cv=cv_method(real_n))
+    gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(), refit='ROC_AUC', cv=cv_method(min(n, 1000)))
     gscv.fit(X, y)
 
     best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
