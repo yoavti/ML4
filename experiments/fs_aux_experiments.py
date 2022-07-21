@@ -14,10 +14,10 @@ from data import data_loader
 from experiments.utils.cv import cv_method
 from experiments.utils.argument_parser import dataset
 from experiments.utils.parameters import ks, score_funcs
+from experiments.utils.preprocess import preprocess_steps
 
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import LabelEncoder, PowerTransformer
-from sklearn.feature_selection import VarianceThreshold, SelectKBest, SelectFdr
+from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_selection import SelectFdr
 
 pp = PrettyPrinter()
 
@@ -25,11 +25,7 @@ pp = PrettyPrinter()
 def preprocess(X, y):
     y = LabelEncoder().fit_transform(y)
     n, d = X.shape
-    transformers = [SimpleImputer(),
-                    VarianceThreshold(),
-                    PowerTransformer(),
-                    SelectKBest(k='all' if n < 1000 else 1000)]
-    for transformer in transformers:
+    for _, transformer in preprocess_steps(n):
         X = transformer.fit_transform(X, y)
     return X, y
 

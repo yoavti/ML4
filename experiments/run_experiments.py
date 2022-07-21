@@ -16,9 +16,8 @@ from model_selection import ClassifierSwitcher, TransformerSwitcher
 from data import data_loader
 
 from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import LabelEncoder, PowerTransformer
-from sklearn.feature_selection import VarianceThreshold
+from sklearn.preprocessing import LabelEncoder
+from experiments.utils.preprocess import preprocess_steps
 
 from sklearn.model_selection import GridSearchCV
 from experiments.utils.cv import cv_method
@@ -60,12 +59,7 @@ def run_experiment(ds):
 
     n, d = X.shape
 
-    pipeline = Pipeline([('imputer', SimpleImputer()),
-                         ('var_thresh', VarianceThreshold()),
-                         ('transform', PowerTransformer()),
-                         ('ff', SelectKBest(k='all' if n < 1000 else 1000)),
-                         ('fs', TransformerSwitcher()),
-                         ('clf', ClassifierSwitcher(SVC()))],
+    pipeline = Pipeline(preprocess_steps(n) + [('fs', TransformerSwitcher()), ('clf', ClassifierSwitcher(SVC()))],
                         memory=os.path.join('pipeline_memory', ds))
 
     real_n = min(n, 1000)
