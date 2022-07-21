@@ -31,8 +31,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 
-from sklearn.metrics import accuracy_score, matthews_corrcoef, roc_auc_score, make_scorer
-from metrics import pr_auc_score, binary_metric
+from experiments.utils.metrics import get_metrics
 
 parser = ArgumentParser()
 parser.add_argument('dataset')
@@ -62,16 +61,6 @@ parameters = [
 ]
 
 
-def my_metrics():
-    binary_metrics = {'ROC_AUC': roc_auc_score,
-                      'PR_AUC': pr_auc_score}
-    binary_metrics = {name: binary_metric(metric) for name, metric in binary_metrics.items()}
-    regular_metrics = {'ACC': accuracy_score, 'MCC': matthews_corrcoef}
-    all_metrics = regular_metrics | binary_metrics
-    scorers = {name: make_scorer(metric) for name, metric in all_metrics.items()}
-    return scorers
-
-
 def run_experiment(dataset):
     X, y = data_loader.load(dataset)
     y = LabelEncoder().fit_transform(y)
@@ -88,9 +77,7 @@ def run_experiment(dataset):
 
     real_n = min(n, 1000)
 
-    cv = cv_method(real_n)
-
-    gscv = GridSearchCV(pipeline, parameters, scoring=my_metrics(), refit='ROC_AUC', cv=cv)
+    gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(), refit='ROC_AUC', cv=cv_method(real_n))
     gscv.fit(X, y)
 
     best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
