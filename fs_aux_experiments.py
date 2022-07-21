@@ -1,24 +1,29 @@
+from sklearnex import patch_sklearn
+patch_sklearn()
+
+import json
+import os
+
 from time import time
 from argparse import ArgumentParser
 from pprint import PrettyPrinter
 
 import pandas as pd
+import numpy as np
 
 from data import data_loader
 from feature_selection import lfs, ufs_sp, mrmr_score, relief_f
-
-import numpy as np
 
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, PowerTransformer
 from sklearn.feature_selection import VarianceThreshold, SelectKBest, SelectFdr
 from sklearn.model_selection import LeaveOneOut, LeavePOut, KFold
 
+pp = PrettyPrinter()
+
 parser = ArgumentParser()
 parser.add_argument('dataset')
 args = parser.parse_args()
-
-pp = PrettyPrinter()
 
 
 def cv_method(n):
@@ -46,7 +51,7 @@ def preprocess(X, y):
 ks = [10]
 
 
-def run(dataset):
+def run_experiment(dataset):
     times = []
     all_selected_features = []
     all_selected_features_scores = []
@@ -102,5 +107,19 @@ def run(dataset):
     return times, all_selected_features, all_selected_features_scores
 
 
+def save_dict(dataset, name, d):
+    print(name)
+    pp.pprint(d)
+    with open(os.path.join('results', f'{dataset}_{name}.json'), 'w+') as f:
+        json.dump(d, f)
+
+
+def main(dataset):
+    times, selected_features, selected_features_scores = run_experiment(dataset)
+    save_dict(dataset, 'time', time)
+    save_dict(dataset, 'selected_features', selected_features)
+    save_dict(dataset, 'selected_features_scores', selected_features_scores)
+
+
 if __name__ == '__main__':
-    run(args.dataset.strip())
+    main(args.dataset.strip())
