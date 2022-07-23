@@ -40,7 +40,7 @@ def create_ufs_sp(solve_W):
         obj = obj_v(v, L, beta, k)
         for _ in range(max_steps):
             v = update_v(L, beta, k)
-            W = solve_W(X, v, alpha, max_steps_W)
+            W = solve_W(X, v, alpha, max_steps_W=max_steps_W)
             k /= mu
             L = calc_L(X, W)
             new_obj = obj_v(v, L, beta, k)
