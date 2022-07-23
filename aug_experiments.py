@@ -1,10 +1,14 @@
 from sklearnex import patch_sklearn
 patch_sklearn()
 
+import os
+import json
+
 import numpy as np
 import pandas as pd
 
 from argparse import ArgumentParser
+from pprint import PrettyPrinter
 
 from data import data_loader
 from experiment_utils.cv import cv_method
@@ -17,6 +21,8 @@ from sklearn.feature_selection import SelectKBest, SelectFdr
 from sklearn.base import clone
 
 from imblearn.over_sampling import SMOTE
+
+pp = PrettyPrinter()
 
 fss = {score_func.__name__: SelectKBest(score_func) for score_func in score_funcs}
 fss['select_fdr'] = SelectFdr(alpha=0.1)
@@ -83,6 +89,9 @@ def run_aug(ds, fs, clf):
 
 def main():
     metric_values = run_aug(args.dataset, fss[args.feature_selector], named_classifiers[args.classifier])
+    pp.pprint(metric_values)
+    with open(os.path.join('results', f'{args.dataset}_aug.json'), 'w+') as f:
+        json.dump(metric_values, f)
 
 
 if __name__ == '__main__':
