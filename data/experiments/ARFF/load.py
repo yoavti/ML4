@@ -4,7 +4,7 @@ from scipy.io import arff
 from data.utils import split_X_y, LabelColumnLoader
 
 
-datasets = ['Breast', 'CNS', 'Lung', 'Lymphoma', 'MLL', 'Ovarian', 'SRBCT']
+datasets = ['SRBCT', 'Lymphoma', 'CNS', 'MLL', 'Lung', 'Ovarian', 'Breast']  # sorted in increasing size
 label_columns = {'Breast': 'Class',
                  'CNS': 'CLASS',
                  'Lung': 'type',

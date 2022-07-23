@@ -3,9 +3,9 @@ import os
 from data.utils import LabelFileLoader
 
 
-datasets = ['ALLAML', 'arcene', 'BASEHOCK', 'Carcinom', 'CLL-SUB-111', 'colon', 'GLI-85', 'GLIOMA', 'leukemia', 'lung',
-            'lung_small', 'lymphoma', 'nci9', 'ORL', 'orlraws10P', 'PCMAC', 'pixraw10P', 'Prostate-GE', 'RELATHE',
-            'SMK-CAN-187', 'TOX-171', 'warpAR10P', 'warpPIE10P', 'Yale']
+datasets = ['lung_small', 'Yale', 'ORL', 'colon', 'warpAR10P', 'warpPIE10P', 'PCMAC', 'lung', 'lymphoma', 'RELATHE',
+            'GLIOMA', 'BASEHOCK', 'TOX-171', 'Prostate-GE', 'leukemia', 'ALLAML', 'Carcinom', 'nci9', 'pixraw10P',
+            'arcene', 'orlraws10P', 'CLL-SUB-111', 'SMK-CAN-187', 'GLI-85']  # sorted in increasing size
 dataset_sizes = {'ALLAML': (7129, 72),
                  'arcene': (10000, 200),
                  'BASEHOCK': (4862, 1993),

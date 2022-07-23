@@ -4,8 +4,8 @@ import os
 from data.utils import split_X_y, LabelColumnLoader
 
 
-datasets = ['ALL', 'ayeastCC', 'bcellViper', 'bladderbatch', 'breastCancerVDX', 'CLL', 'COPDSexualDimorphism.data',
-            'curatedOvarianData', 'DLBCL', 'leukemiasEset']
+datasets = ['DLBCL', 'curatedOvarianData', 'ayeastCC', 'bcellViper', 'CLL', 'ALL', 'COPDSexualDimorphism.data',
+            'leukemiasEset', 'bladderbatch', 'breastCancerVDX']  # sorted in increasing size
 label_columns = {'ALL': 'MDRClass',
                  'ayeastCC': 'Class',
                  'bcellViper': 'TypeClass',

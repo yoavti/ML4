@@ -4,9 +4,9 @@ from data.utils import LabelFileLoader
 
 
 purposes = ['inputs', 'outputs']
-datasets = ['alon', 'borovecki', 'burczynski', 'chiaretti', 'chin', 'chowdary', 'christensen', 'golub', 'gordon',
-            'gravier', 'khan', 'nakayama', 'pomeroy', 'shipp', 'singh', 'sorlie', 'su', 'subramanian', 'sun', 'tian',
-            'west', 'yeoh']
+datasets = ['sorlie', 'christensen', 'alon', 'khan', 'gravier', 'su', 'pomeroy', 'west', 'golub', 'shipp',
+            'subramanian', 'gordon', 'singh', 'chiaretti', 'tian', 'yeoh', 'chin', 'borovecki', 'chowdary', 'nakayama',
+            'burczynski', 'sun']  # sorted in increasing size
 dataset_sizes = {'alon': (2000, 62),
                  'borovecki': (22283, 31),
                  'burczynski': (22283, 127),
