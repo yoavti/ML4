@@ -16,16 +16,16 @@ label_columns = {'ALL': 'MDRClass',
                  'curatedOvarianData': 'GradeClass',
                  'DLBCL': 'IPIClass',
                  'leukemiasEset': 'LeukemiaTypeClass'}
-dataset_sizes = {'ALL': (128, 12625),
-                 'ayeastCC': (50, 6228),
-                 'bcellViper': (211, 6249),
-                 'bladderbatch': (57, 22283),
-                 'breastCancerVDX': (344, 22284),
-                 'CLL': (22, 12625),
-                 'COPDSexualDimorphism.data': (229, 14497),
-                 'curatedOvarianData': (194, 3584),
-                 'DLBCL': (194, 3583),
-                 'leukemiasEset': (60, 20172)}
+dataset_sizes = {'ALL': (12625, 128),
+                 'ayeastCC': (6228, 50),
+                 'bcellViper': (6249, 211),
+                 'bladderbatch': (22283, 57),
+                 'breastCancerVDX': (22284, 344),
+                 'CLL': (12625, 22),
+                 'COPDSexualDimorphism.data': (14497, 229),
+                 'curatedOvarianData': (3584, 194),
+                 'DLBCL': (3583, 194),
+                 'leukemiasEset': (20172, 60)}
 
 
 class BioconductorLoader(LabelColumnLoader):

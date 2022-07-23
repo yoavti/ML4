@@ -12,13 +12,13 @@ label_columns = {'Breast': 'Class',
                  'MLL': 'class',
                  'Ovarian': 'Class',
                  'SRBCT': 'CLASS'}
-dataset_sizes = {'Breast': (97, 24481),
-                 'CNS': (60, 7129),
-                 'Lung': (203, 12600),
-                 'Lymphoma': (66, 4026),
-                 'MLL': (72, 12582),
-                 'Ovarian': (253, 15154),
-                 'SRBCT': (83, 2308)}
+dataset_sizes = {'Breast': (24481, 97),
+                 'CNS': (7129, 60),
+                 'Lung': (12600, 203),
+                 'Lymphoma': (4026, 66),
+                 'MLL': (12582, 72),
+                 'Ovarian': (15154, 253),
+                 'SRBCT': (2308, 83)}
 
 
 class ARFFLoader(LabelColumnLoader):
