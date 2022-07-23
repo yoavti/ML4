@@ -1,7 +1,7 @@
 from .loader import Loader
 
 
-class FileLoader(Loader):
+class LabelColumnLoader(Loader):
     def __init__(self, label_columns):
         self._label_columns = label_columns
 
