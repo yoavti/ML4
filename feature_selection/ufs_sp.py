@@ -3,7 +3,7 @@ from functools import partial
 
 
 def l_2_1_norm_vec(X):
-    return np.apply_along_axis(lambda X_i: (X_i ** 2).sum(), 0, X)
+    return np.apply_along_axis(np.linalg.norm, 0, X)
 
 
 def l_2_1_norm(X):
