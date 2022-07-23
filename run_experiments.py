@@ -56,7 +56,7 @@ def run_experiment(ds):
     pipeline = Pipeline(preprocess_steps(n) + [('fs', TransformerSwitcher()), ('clf', ClassifierSwitcher(SVC()))],
                         memory=os.path.join('pipeline_memory', ds))
 
-    gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(), refit='ROC_AUC', cv=cv_method(min(n, 1000)))
+    gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(True), refit='ROC_AUC', cv=cv_method(min(n, 1000)))
     gscv.fit(X, y)
 
     best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
