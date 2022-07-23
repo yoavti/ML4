@@ -14,6 +14,7 @@ from experiment_utils.preprocess import preprocess
 
 from sklearn.decomposition import KernelPCA
 from sklearn.feature_selection import SelectKBest, SelectFdr
+from sklearn.base import clone
 
 from imblearn.over_sampling import SMOTE
 
@@ -36,6 +37,9 @@ def insert_pca_columns(df, data, kernel):
 
 
 def run_aug(ds, fs, clf):
+    fs_orig = clone(fs)
+    clf_orig = clone(clf)
+
     X, y = data_loader.load(ds)
     X, y = preprocess(X, y)
     n, d = X.shape
@@ -48,6 +52,9 @@ def run_aug(ds, fs, clf):
     for train_index, test_index in cv_method(n).split(X, y):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
         y_train, y_test = y[train_index], y[test_index]
+
+        fs = clone(fs_orig)
+        clf = clone(clf_orig)
 
         fs.fit(X_train, y_train)
         X_train = fs.transform(X_train, y_train)
@@ -75,7 +82,7 @@ def run_aug(ds, fs, clf):
 
 
 def main():
-    metric_values = run_aug(args.dataset, fss[args.feature_selector], classifiers[args.classifier])
+    metric_values = run_aug(args.dataset, fss[args.feature_selector], named_classifiers[args.classifier])
 
 
 if __name__ == '__main__':
