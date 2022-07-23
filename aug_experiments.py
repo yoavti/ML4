@@ -35,7 +35,7 @@ def insert_pca_columns(df, data, kernel):
     df[[f'{kernel}_{i}' for i in range(d)]] = data
 
 
-def run(ds, fs, clf):
+def run_aug(ds, fs, clf):
     X, y = data_loader.load(ds)
     X, y = preprocess(X, y)
     n, d = X.shape
@@ -75,4 +75,4 @@ def run(ds, fs, clf):
 
 
 if __name__ == '__main__':
-    metric_values = run(args.dataset, fss[args.feature_selector], classifiers[args.classifier])
+    metric_values = run_aug(args.dataset, fss[args.feature_selector], classifiers[args.classifier])
