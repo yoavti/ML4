@@ -14,20 +14,11 @@ from data import data_loader
 from experiment_utils.cv import cv_method
 from experiment_utils.argument_parser import dataset
 from experiment_utils.parameters import ks, score_funcs
-from experiment_utils.preprocess import preprocess_steps
+from experiment_utils.preprocess import preprocess
 
-from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_selection import SelectFdr
 
 pp = PrettyPrinter()
-
-
-def preprocess(X, y):
-    y = LabelEncoder().fit_transform(y)
-    n, d = X.shape
-    for _, transformer in preprocess_steps(n):
-        X = transformer.fit_transform(X, y)
-    return X, y
 
 
 def run_experiment(ds):
