@@ -11,10 +11,10 @@ import pandas as pd
 import numpy as np
 
 from data import data_loader
-from experiments.utils.cv import cv_method
-from experiments.utils.argument_parser import dataset
-from experiments.utils.parameters import ks, score_funcs
-from experiments.utils.preprocess import preprocess_steps
+from experiment_utils.cv import cv_method
+from experiment_utils.argument_parser import dataset
+from experiment_utils.parameters import ks, score_funcs
+from experiment_utils.preprocess import preprocess_steps
 
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_selection import SelectFdr
@@ -88,7 +88,7 @@ def run_experiment(ds):
 def save_dict(ds, name, d):
     print(name)
     pp.pprint(d)
-    with open(os.path.join('../results', f'{ds}_{name}.json'), 'w+') as f:
+    with open(os.path.join('results', f'{ds}_{name}.json'), 'w+') as f:
         json.dump(d, f)
 
 

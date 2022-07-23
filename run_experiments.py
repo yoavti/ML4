@@ -12,11 +12,11 @@ from time import time
 from model_selection import ClassifierSwitcher, TransformerSwitcher
 from data import data_loader
 
-from experiments.utils.preprocess import preprocess_steps
-from experiments.utils.cv import cv_method
-from experiments.utils.metrics import get_metrics
-from experiments.utils.parameters import score_funcs, ks, classifiers
-from experiments.utils.argument_parser import dataset
+from experiment_utils.preprocess import preprocess_steps
+from experiment_utils.cv import cv_method
+from experiment_utils.metrics import get_metrics
+from experiment_utils.parameters import score_funcs, ks, classifiers
+from experiment_utils.argument_parser import dataset
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
@@ -61,12 +61,12 @@ def run_experiment(ds):
 
     best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
     pp.pprint(best)
-    with open(os.path.join('../results', f'{ds}.json'), 'w+') as f:
+    with open(os.path.join('results', f'{ds}.json'), 'w+') as f:
         json.dump(best, f)
     cv_results = gscv.cv_results_
     pp.pprint(cv_results)
     cv_results = pd.DataFrame(cv_results)
-    cv_results.to_csv(os.path.join('../results', f'{ds}.csv'))
+    cv_results.to_csv(os.path.join('results', f'{ds}.csv'))
 
 
 if __name__ == '__main__':
