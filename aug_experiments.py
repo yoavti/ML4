@@ -4,14 +4,30 @@ patch_sklearn()
 import numpy as np
 import pandas as pd
 
+from argparse import ArgumentParser
+
 from data import data_loader
 from experiment_utils.cv import cv_method
 from experiment_utils.metrics import get_metrics
+from experiment_utils.parameters import score_funcs, classifiers, ks
 from experiment_utils.preprocess import preprocess
 
 from sklearn.decomposition import KernelPCA
+from sklearn.feature_selection import SelectKBest, SelectFdr
 
 from imblearn.over_sampling import SMOTE
+
+fss = {score_func.__name__: SelectKBest(score_func) for score_func in score_funcs}
+fss['select_fdr'] = SelectFdr(alpha=0.1)
+
+named_classifiers = {classifier.__name__: classifier for classifier in classifiers}
+
+parser = ArgumentParser(description='Data augmentation experiments.')
+parser.add_argument('-d', '--dataset', type=str, help='dataset')
+parser.add_argument('-fs', '--feature_selection', type=str, choices=list(fss), help='feature selection method')
+parser.add_argument('-clf', '--classifier', type=str, choices=list(named_classifiers), help='classifier')
+parser.add_argument('-k', '--n_features_to_select', type=int, choices=ks, help='number of features to select')
+args = parser.parse_args()
 
 
 def insert_pca_columns(df, data, kernel):
@@ -56,3 +72,7 @@ def run(ds, fs, clf):
             metric_values[metric_name].append(metric(y_test, y_pred))
 
     return metric_values
+
+
+if __name__ == '__main__':
+    metric_values = run(args.dataset, fss[args.feature_selector], classifiers[args.classifier])
