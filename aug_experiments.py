@@ -74,5 +74,9 @@ def run_aug(ds, fs, clf):
     return metric_values
 
 
-if __name__ == '__main__':
+def main():
     metric_values = run_aug(args.dataset, fss[args.feature_selector], classifiers[args.classifier])
+
+
+if __name__ == '__main__':
+    main()
