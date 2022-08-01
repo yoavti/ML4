@@ -27,17 +27,18 @@ from sklearn.svm import SVC
 # from sklearn.svm import SVR
 
 parser = ArgumentParser()
-parser.add_argument('dataset')
+parser.add_argument('dataset', type=str, help='dataset to run experiments on')
+parser.add_argument('-k', default=10, type=int, choices=ks, required=False, help='number of selected features')
 args = parser.parse_args()
 dataset = args.dataset.strip()
+k = args.k
 
 pp = PrettyPrinter()
 
 parameters = [
     {
-        'fs__transformer': [SelectKBest()],
+        'fs__transformer': [SelectKBest(k=k)],
         'fs__transformer__score_func': score_funcs,
-        'fs__transformer__k': ks,
         'clf__estimator': classifiers,
     },
     {
@@ -45,8 +46,7 @@ parameters = [
         'clf__estimator': classifiers,
     },
     # {
-    #     'fs__transformer': [RFE(SVR(kernel='linear'))],
-    #     'fs__transformer__n_features_to_select': ks,
+    #     'fs__transformer': [RFE(SVR(kernel='linear'), n_features_to_select=k)],
     #     'clf__estimator': classifiers,
     # },
 ]
