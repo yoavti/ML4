@@ -24,10 +24,12 @@ class ClassifierSwitcher(BaseEstimator, ClassifierMixin):
         return self.estimator.predict_proba(X)
 
 
+fs_results = dict(times=[], scores=[], features=[])
+
+
 class FSSwitcher(BaseEstimator, TransformerMixin):
     def __init__(self, transformer=SelectKBest()):
         self.transformer = transformer
-        self.fs_results = dict(times=[], scores=[], features=[])
 
     def fit(self, X, y=None, **kwargs):
         start = time()
@@ -37,9 +39,9 @@ class FSSwitcher(BaseEstimator, TransformerMixin):
         scores = self.transformer.scores_
         selected_scores = scores[mask]
         feature_features = self.transformer.get_feature_names_out()
-        self.fs_results['times'].append(elapsed)
-        self.fs_results['scores'].append(selected_scores)
-        self.fs_results['features'].append(feature_features)
+        fs_results['times'].append(elapsed)
+        fs_results['scores'].append(selected_scores)
+        fs_results['features'].append(feature_features)
         return self
 
     def transform(self, X):
