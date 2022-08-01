@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.neighbors import KDTree
 
 
-def relief_f(X, y, n_neighbors=100):
+def relief_f(X, y, n_neighbors=20):
     feature_scores = np.zeros(X.shape[1])
     tree = KDTree(X)
 
