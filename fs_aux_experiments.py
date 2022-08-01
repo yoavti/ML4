@@ -6,17 +6,22 @@ import os
 
 from time import time
 from pprint import PrettyPrinter
+from argparse import ArgumentParser
 
 import pandas as pd
 import numpy as np
 
 from data import data_loader
 from experiment_utils.cv import cv_method
-from experiment_utils.argument_parser import dataset
 from experiment_utils.parameters import ks, score_funcs
 from experiment_utils.preprocess import preprocess
 
 from sklearn.feature_selection import SelectFdr
+
+parser = ArgumentParser()
+parser.add_argument('dataset')
+args = parser.parse_args()
+dataset = args.dataset.strip()
 
 pp = PrettyPrinter()
 

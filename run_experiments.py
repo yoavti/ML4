@@ -8,6 +8,7 @@ import pandas as pd
 
 from pprint import PrettyPrinter
 from time import time
+from argparse import ArgumentParser
 
 from model_selection import ClassifierSwitcher, TransformerSwitcher
 from data import data_loader
@@ -16,7 +17,6 @@ from experiment_utils.preprocess import preprocess_steps
 from experiment_utils.cv import cv_method, num_rows
 from experiment_utils.metrics import get_metrics
 from experiment_utils.parameters import score_funcs, ks, classifiers
-from experiment_utils.argument_parser import dataset
 
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
@@ -25,6 +25,11 @@ from sklearn.feature_selection import SelectKBest, SelectFdr
 # from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
 # from sklearn.svm import SVR
+
+parser = ArgumentParser()
+parser.add_argument('dataset')
+args = parser.parse_args()
+dataset = args.dataset.strip()
 
 pp = PrettyPrinter()
 
