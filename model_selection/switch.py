@@ -25,9 +25,8 @@ class ClassifierSwitcher(BaseEstimator, ClassifierMixin):
 
 
 class FSSwitcher(BaseEstimator, TransformerMixin):
-    def __init__(self, transformer=SelectKBest(), results_path='results'):
+    def __init__(self, transformer=SelectKBest()):
         self.transformer = transformer
-        self.results_path = results_path
         self.fs_results = dict(times=[], scores=[], features=[])
 
     def fit(self, X, y=None, **kwargs):
@@ -41,9 +40,6 @@ class FSSwitcher(BaseEstimator, TransformerMixin):
         self.fs_results['times'].append(elapsed)
         self.fs_results['scores'].append(selected_scores)
         self.fs_results['features'].append(feature_features)
-        if self.results_path:
-            df = pd.DataFrame(self.fs_results)
-            df.to_csv(os.path.join(self.results_path, 'fs.csv'))
         return self
 
     def transform(self, X):
