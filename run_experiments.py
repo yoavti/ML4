@@ -67,7 +67,7 @@ def run_experiment(ds):
     create_if_not_exists('results')
     create_if_not_exists(results_path)
 
-    additional_preprocess_steps = [('fs', FSSwitcher(results_path=results_path)), ('clf', ClassifierSwitcher(SVC()))]
+    additional_preprocess_steps = [('fs', FSSwitcher()), ('clf', ClassifierSwitcher(SVC()))]
     pipeline = Pipeline(preprocess_steps(n) + additional_preprocess_steps,
                         memory=os.path.join('pipeline_memory', ds))
 
@@ -78,10 +78,16 @@ def run_experiment(ds):
     pp.pprint(best)
     with open(os.path.join(results_path, f'best.json'), 'w+') as f:
         json.dump(best, f)
+
     cv_results = gscv.cv_results_
     pp.pprint(cv_results)
     cv_results = pd.DataFrame(cv_results)
     cv_results.to_csv(os.path.join(results_path, f'cv_results.csv'))
+
+    fs_results = gscv.estimator.named_steps['fs'].fs_results
+    pp.pprint(fs_results)
+    df = pd.DataFrame(fs_results)
+    df.to_csv(os.path.join(results_path, 'fs.csv'))
 
 
 if __name__ == '__main__':
