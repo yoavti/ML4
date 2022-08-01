@@ -13,7 +13,7 @@ from model_selection import ClassifierSwitcher, TransformerSwitcher
 from data import data_loader
 
 from experiment_utils.preprocess import preprocess_steps
-from experiment_utils.cv import cv_method
+from experiment_utils.cv import cv_method, num_rows
 from experiment_utils.metrics import get_metrics
 from experiment_utils.parameters import score_funcs, ks, classifiers
 from experiment_utils.argument_parser import dataset
@@ -53,10 +53,16 @@ def run_experiment(ds):
 
     n, d = X.shape
 
+    _num_rows = num_rows(n)
+    X = X[:_num_rows]
+    y = y[:_num_rows]
+
+    n, d = X.shape
+
     pipeline = Pipeline(preprocess_steps(n) + [('fs', TransformerSwitcher()), ('clf', ClassifierSwitcher(SVC()))],
                         memory=os.path.join('pipeline_memory', ds))
 
-    gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(True), refit='ROC_AUC', cv=cv_method(min(n, 1000)))
+    gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(True), refit='ROC_AUC', cv=cv_method(n))
     gscv.fit(X, y)
 
     best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
