@@ -22,9 +22,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import GridSearchCV
 from sklearn.feature_selection import SelectKBest, SelectFdr
-# from sklearn.feature_selection import RFE
 from sklearn.svm import SVC
-# from sklearn.svm import SVR
 
 parser = ArgumentParser()
 parser.add_argument('dataset', type=str, help='dataset to run experiments on')
@@ -45,10 +43,6 @@ parameters = [
         'fs__transformer': [SelectFdr(alpha=0.1)],
         'clf__estimator': classifiers,
     },
-    # {
-    #     'fs__transformer': [RFE(SVR(kernel='linear'), n_features_to_select=k)],
-    #     'clf__estimator': classifiers,
-    # },
 ]
 
 
