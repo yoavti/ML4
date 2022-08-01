@@ -10,7 +10,7 @@ from pprint import PrettyPrinter
 from time import time
 from argparse import ArgumentParser
 
-from model_selection import ClassifierSwitcher, FSSwitcher
+from model_selection import ClassifierSwitcher, FSSwitcher, fs_results
 from data import data_loader
 
 from experiment_utils.preprocess import preprocess_steps
@@ -84,7 +84,6 @@ def run_experiment(ds):
     cv_results = pd.DataFrame(cv_results)
     cv_results.to_csv(os.path.join(results_path, f'cv_results.csv'))
 
-    fs_results = gscv.estimator.named_steps['fs'].fs_results
     pp.pprint(fs_results)
     df = pd.DataFrame(fs_results)
     df.to_csv(os.path.join(results_path, 'fs.csv'))
