@@ -1,6 +1,12 @@
+import os
+
+import pandas as pd
+
+from time import time
+
 from sklearn.base import BaseEstimator, ClassifierMixin, TransformerMixin
 from sklearn.linear_model import SGDClassifier
-from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import SelectKBest
 
 
 class ClassifierSwitcher(BaseEstimator, ClassifierMixin):
@@ -18,12 +24,26 @@ class ClassifierSwitcher(BaseEstimator, ClassifierMixin):
         return self.estimator.predict_proba(X)
 
 
-class TransformerSwitcher(BaseEstimator, TransformerMixin):
-    def __init__(self, transformer=StandardScaler()):
+class FSSwitcher(BaseEstimator, TransformerMixin):
+    def __init__(self, transformer=SelectKBest(), results_path='results'):
         self.transformer = transformer
+        self.results_path = results_path
+        self.fs_results = dict(times=[], scores=[], features=[])
 
     def fit(self, X, y=None, **kwargs):
+        start = time()
         self.transformer.fit(X, y)
+        elapsed = time() - start
+        mask = self.transformer.get_support()
+        scores = self.transformer.scores_
+        selected_scores = scores[mask]
+        feature_features = self.transformer.get_feature_names_out()
+        self.fs_results['times'].append(elapsed)
+        self.fs_results['scores'].append(selected_scores)
+        self.fs_results['features'].append(feature_features)
+        if self.results_path:
+            df = pd.DataFrame(self.fs_results)
+            df.to_csv(os.path.join(self.results_path, 'fs.csv'))
         return self
 
     def transform(self, X):

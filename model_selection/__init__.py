@@ -1,1 +1,1 @@
-from .switch import ClassifierSwitcher, TransformerSwitcher
+from .switch import ClassifierSwitcher, FSSwitcher

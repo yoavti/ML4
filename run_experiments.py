@@ -10,7 +10,7 @@ from pprint import PrettyPrinter
 from time import time
 from argparse import ArgumentParser
 
-from model_selection import ClassifierSwitcher, TransformerSwitcher
+from model_selection import ClassifierSwitcher, FSSwitcher
 from data import data_loader
 
 from experiment_utils.preprocess import preprocess_steps
@@ -46,6 +46,11 @@ parameters = [
 ]
 
 
+def create_if_not_exists(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+
 def run_experiment(ds):
     X, y = data_loader.load(ds)
     y = LabelEncoder().fit_transform(y)
@@ -58,7 +63,12 @@ def run_experiment(ds):
 
     n, d = X.shape
 
-    pipeline = Pipeline(preprocess_steps(n) + [('fs', TransformerSwitcher()), ('clf', ClassifierSwitcher(SVC()))],
+    results_path = os.path.join('results', ds)
+    create_if_not_exists('results')
+    create_if_not_exists(results_path)
+
+    additional_preprocess_steps = [('fs', FSSwitcher(results_path=results_path)), ('clf', ClassifierSwitcher(SVC()))]
+    pipeline = Pipeline(preprocess_steps(n) + additional_preprocess_steps,
                         memory=os.path.join('pipeline_memory', ds))
 
     gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(True), refit='ROC_AUC', cv=cv_method(n))
@@ -66,12 +76,12 @@ def run_experiment(ds):
 
     best = {'index': int(gscv.best_index_), 'score': gscv.best_score_}
     pp.pprint(best)
-    with open(os.path.join('results', f'{ds}.json'), 'w+') as f:
+    with open(os.path.join(results_path, f'best.json'), 'w+') as f:
         json.dump(best, f)
     cv_results = gscv.cv_results_
     pp.pprint(cv_results)
     cv_results = pd.DataFrame(cv_results)
-    cv_results.to_csv(os.path.join('results', f'{ds}.csv'))
+    cv_results.to_csv(os.path.join(results_path, f'cv_results.csv'))
 
 
 if __name__ == '__main__':
