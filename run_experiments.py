@@ -36,10 +36,10 @@ parameters = [
         'fs__transformer__score_func': score_funcs,
         'clf__estimator': classifiers,
     },
-    {
-        'fs__transformer': [SelectFdr(alpha=0.1)],
-        'clf__estimator': classifiers,
-    },
+    # {
+    #     'fs__transformer': [SelectFdr(alpha=0.1)],
+    #     'clf__estimator': classifiers,
+    # },
 ]
 
 
