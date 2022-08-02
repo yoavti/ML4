@@ -80,16 +80,10 @@ def run_aug(ds, fs, clf):
     return metric_values
 
 
-def create_if_not_exists(path):
-    if not os.path.exists(path):
-        os.mkdir(path)
-
-
 def main():
     metric_values = run_aug(args.dataset, fss[args.feature_selection], named_classifiers[args.classifier])
     pp.pprint(metric_values)
     results_path = os.path.join('results', 'aug', args.dataset)
-    create_if_not_exists(results_path)
     with open(os.path.join(results_path, 'res.json'), 'w+') as f:
         json.dump(metric_values, f)
 
