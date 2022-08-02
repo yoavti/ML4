@@ -60,7 +60,7 @@ def run_experiment(ds):
 
     n, d = X.shape
 
-    results_path = os.path.join('results', ds, k)
+    results_path = os.path.join('results', ds, str(k))
     create_if_not_exists(results_path)
 
     additional_preprocess_steps = [('fs', FSSwitcher()), ('clf', ClassifierSwitcher(SVC()))]
