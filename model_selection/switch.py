@@ -47,9 +47,11 @@ class FSSwitcher(BaseEstimator, TransformerMixin):
             fname = self.transformer.__class__.__name__
             if isinstance(self.transformer, SelectKBest):
                 fname = self.transformer.score_func.__name__
-            processed = self.transformer.transform(X)
-            df = pd.DataFrame(processed)
-            df.to_csv(os.path.join(self.results_path, fname + '.csv'))
+            path = os.path.join(self.results_path, fname + '.csv')
+            if not os.path.exists(path) or True:
+                processed = self.transformer.transform(X)
+                df = pd.DataFrame(processed)
+                df.to_csv(path)
         return self
 
     def transform(self, X):
