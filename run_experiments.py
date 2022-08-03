@@ -67,7 +67,8 @@ def run_experiment(ds):
     results_path = os.path.join(results_path, str(k))
     create_if_not_exists(results_path)
 
-    additional_preprocess_steps = [('fs', FSSwitcher()), ('clf', ClassifierSwitcher(SVC()))]
+    additional_preprocess_steps = [('fs', FSSwitcher(results_path=results_path)),
+                                   ('clf', ClassifierSwitcher(SVC()))]
     pipeline = Pipeline(preprocess_steps(n) + additional_preprocess_steps,
                         memory=os.path.join('pipeline_memory', ds))
 
