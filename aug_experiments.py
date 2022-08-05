@@ -11,14 +11,15 @@ from argparse import ArgumentParser
 from pprint import PrettyPrinter
 
 from data import data_loader
-from experiment_utils.cv import cv_method
+from experiment_utils.cv import cv_method, num_rows
 from experiment_utils.metrics import get_metrics
 from experiment_utils.parameters import named_score_funcs, named_classifiers, ks
-from experiment_utils.preprocess import preprocess
+from experiment_utils.preprocess import preprocess_steps
 
 from sklearn.decomposition import KernelPCA
 from sklearn.feature_selection import SelectKBest, SelectFdr
 from sklearn.base import clone
+from sklearn.preprocessing import LabelEncoder
 
 from imblearn.over_sampling import SMOTE
 
@@ -41,8 +42,20 @@ def run_aug(ds, fs, clf):
     clf_orig = clone(clf)
 
     X, y = data_loader.load(ds)
-    X, y = preprocess(X, y)
+
+    y = LabelEncoder().fit_transform(y)
     n, d = X.shape
+    for _, transformer in preprocess_steps(n):
+        X = transformer.fit_transform(X, y)
+
+    n, d = X.shape
+
+    _num_rows = num_rows(n)
+    X = X[:_num_rows]
+    y = y[:_num_rows]
+
+    n, d = X.shape
+
     if isinstance(X, np.ndarray):
         X = pd.DataFrame(X, index=None, columns=None)
 
