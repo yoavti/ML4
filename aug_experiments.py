@@ -21,7 +21,7 @@ from sklearn.feature_selection import SelectKBest, SelectFdr
 from sklearn.base import clone
 from sklearn.preprocessing import LabelEncoder
 
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE, RandomOverSampler
 
 pp = PrettyPrinter()
 
@@ -43,8 +43,9 @@ def run_aug(ds, fs, clf):
 
     X, y = data_loader.load(ds)
 
-    y = LabelEncoder().fit_transform(y)
     n, d = X.shape
+
+    y = LabelEncoder().fit_transform(y)
     for _, transformer in preprocess_steps(d):
         X = transformer.fit_transform(X, y)
 
@@ -79,6 +80,9 @@ def run_aug(ds, fs, clf):
         reduced_X_tests = [pca.transform(X_test) for pca in pcas]
         X_train = np.hstack([X_train] + [X for X in reduced_X_trains])
         X_test = np.hstack([X_test] + [X for X in reduced_X_tests])
+
+        over_sampler = RandomOverSampler()
+        X_train, y_train = over_sampler.fit_resample(X_train, y_train)
 
         sm = SMOTE()
         X_train, y_train = sm.fit_resample(X_train, y_train)
