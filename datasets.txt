@@ -1,12 +1,9 @@
 SRBCT
 Lymphoma
-CNS
-MLL
 Lung
 DLBCL
 curatedOvarianData
 ayeastCC
-bcellViper
 CLL
 sorlie
 christensen
@@ -18,3 +15,6 @@ Yale
 ORL
 colon
 warpAR10P
+warpPIE10P
+PCMAC
+lung
