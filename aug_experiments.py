@@ -45,7 +45,7 @@ def run_aug(ds, fs, clf):
 
     y = LabelEncoder().fit_transform(y)
     n, d = X.shape
-    for _, transformer in preprocess_steps(n):
+    for _, transformer in preprocess_steps(d):
         X = transformer.fit_transform(X, y)
 
     n, d = X.shape

@@ -69,7 +69,7 @@ def run_experiment(ds):
 
     additional_preprocess_steps = [('fs', FSSwitcher(results_path=results_path)),
                                    ('clf', ClassifierSwitcher(SVC()))]
-    pipeline = Pipeline(preprocess_steps(n) + additional_preprocess_steps,
+    pipeline = Pipeline(preprocess_steps(d) + additional_preprocess_steps,
                         memory=os.path.join('pipeline_memory', ds))
 
     gscv = GridSearchCV(pipeline, parameters, scoring=get_metrics(True), refit='ROC_AUC', cv=cv_method(n))

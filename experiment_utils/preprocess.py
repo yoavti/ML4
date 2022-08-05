@@ -3,10 +3,10 @@ from sklearn.preprocessing import PowerTransformer
 from sklearn.feature_selection import VarianceThreshold, SelectKBest
 
 
-def preprocess_steps(n):
+def preprocess_steps(d):
     ret = [('imputer', SimpleImputer()),
            ('var_thresh', VarianceThreshold()),
            ('transform', PowerTransformer())]
-    if n >= 1000:
-        ret.append(('ff', SelectKBest(k=n)))
+    if d >= 1000:
+        ret.append(('ff', SelectKBest(k=d)))
     return ret
