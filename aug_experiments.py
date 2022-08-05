@@ -111,7 +111,8 @@ def main():
     create_if_not_exists(results_path)
     results_path = os.path.join(results_path, args.dataset)
     create_if_not_exists(results_path)
-    with open(os.path.join(results_path, 'res.json'), 'w+') as f:
+    results_path = os.path.join(results_path, 'res.json')
+    with open(results_path, 'w+') as f:
         json.dump(metric_values, f)
 
 
