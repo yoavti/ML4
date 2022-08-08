@@ -1,4 +1,5 @@
 import os
+import json
 
 import pandas as pd
 
@@ -139,6 +140,25 @@ def main():
                     mean_fit_time = cv_row['mean_fit_time']
                     add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, 'N/A', 'mean_fit_time',
                                  mean_fit_time, 'N/A', 'N/A')
+            aug_path = os.path.join(dataset_results_path, 'aug')
+            if not os.path.exists(aug_path):
+                continue
+            aug_results_path = os.path.join(aug_path, 'results.csv')
+            if not os.path.exists(aug_results_path):
+                continue
+            aug_results = pd.read_csv(aug_results_path)
+            aug_parameters_path = os.path.join(aug_path, 'parameters.json')
+            if not os.path.exists(aug_parameters_path):
+                continue
+            with open(aug_parameters_path, 'r') as f:
+                aug_parameters = json.load(f)
+            for _, row in aug_results.iterrows():
+                for fold in range(_num_folds):
+                    for metric_name in metric_names:
+                        metric_value = row[metric_name]
+                        add_expr_row(res_dict, dataset, n, d, aug_parameters['fs'], aug_parameters['clf'],
+                                     aug_parameters['k'], _cv_method_name, fold, metric_name, metric_value, 'N/A',
+                                     'N/A')
     res_df = pd.DataFrame(res_dict)
     res_df.to_csv('results.csv', index=False)
 
