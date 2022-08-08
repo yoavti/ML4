@@ -2,6 +2,13 @@ import os
 
 import pandas as pd
 
+from functools import partial
+
+from data.experiments import ARFF, bioconductor, Datamicroarray, scikit_feature_datasets
+from experiment_utils.parameters import ks
+from experiment_utils.cv import num_rows, num_folds, cv_method_name
+from experiment_utils.metrics import get_metrics
+
 
 def remove_first_char(s):
     s = s[1:]
@@ -11,12 +18,6 @@ def remove_first_char(s):
 def replace_whitespace(s, sep=','):
     values = s.split()
     s = sep.join(values)
-    return s
-
-
-def bracketed_to_comma_separated(s):
-    s = remove_first_char(s)
-    s = replace_whitespace(s)
     return s
 
 
@@ -30,23 +31,118 @@ def remove_quotes(s, sep=','):
 def read_fs(path):
     df = pd.read_csv(path)
     df = df.drop('Unnamed: 0', axis=1)
-    df['scores'] = df['scores'].apply(lambda s: replace_whitespace(remove_first_char(s)))
-    df['features'] = df['features'].apply(lambda s: remove_quotes(replace_whitespace(remove_first_char(s))))
+
+    df['scores'] = df['scores'].apply(remove_first_char)
+    df['scores'] = df['scores'].apply(replace_whitespace)
+
+    df['features'] = df['features'].apply(remove_first_char)
+    df['features'] = df['features'].apply(replace_whitespace)
+    df['features'] = df['features'].apply(remove_quotes)
+
     return df
+
+
+def func_to_name(func):
+    return func[10:-19]
+
+
+def until(s, c):
+    idx = s.find(c)
+    s = s[:idx]
+    return s
 
 
 def read_cv_results(path):
     df = pd.read_csv(path)
     df = df.drop('Unnamed: 0', axis=1)
+
+    df['param_fs__transformer__score_func'] = df['param_fs__transformer__score_func'].astype(str)
+    df['param_fs__transformer__score_func'] = df['param_fs__transformer__score_func'].apply(func_to_name)
+
+    df['param_fs__transformer'] = df['param_fs__transformer'].apply(partial(until, c='('))
+
+    df['param_clf__estimator'] = df['param_clf__estimator'].astype(str)
+
+    df['param_clf__estimator'] = df['param_clf__estimator'].astype(str)
+    df['param_clf__estimator'] = df['param_clf__estimator'].apply(partial(until, c='()'))
     return df
 
 
+def add_expr_row(dictionary, dataset, n, d, fs, clf, k, cv, fold, metric_name, metric_value, features, scores):
+    dictionary['Dataset Name'].append(dataset)
+    dictionary['Number of Samples'].append(n)
+    dictionary['Original Number of Features'].append(d)
+    dictionary['Filtering Algorithm'].append(fs)
+    dictionary['Learning Algorithm'].append(clf)
+    dictionary['Number of Features Selected'].append(k)
+    dictionary['CV Method'].append(cv)
+    dictionary['Fold'].append(fold)
+    dictionary['Measure Type'].append(metric_name)
+    dictionary['Measure Value'].append(metric_value)
+    dictionary['List of Selected Feature Names'].append(features)
+    dictionary['Selected Feature Scores'].append(scores)
+
+
+def fs_method_name(transformer, score_func):
+    if score_func:
+        return score_func
+    return transformer
+
+
 def main():
-    path = os.path.join('results', 'alon', '10')
-    fs = read_fs(os.path.join(path, 'fs.csv'))
-    cv_results = read_cv_results(os.path.join(path, 'cv_results.csv'))
-    print(cv_results)
+    res_dict = {'Dataset Name': [], 'Number of Samples': [], 'Original Number of Features': [],
+                'Filtering Algorithm': [], 'Learning Algorithm': [], 'Number of Features Selected': [], 'CV Method': [],
+                'Fold': [], 'Measure Type': [], 'Measure Value': [], 'List of Selected Feature Names': [],
+                'Selected Feature Scores': []}
+    results_path = 'results'
+    metric_names = list(get_metrics())
+    directories = [ARFF, bioconductor, Datamicroarray, scikit_feature_datasets]
+    for directory in directories:
+        for dataset, (d, n) in directory.load.dataset_sizes.items():
+            dataset_results_path = os.path.join(results_path, dataset)
+            if not os.path.exists(dataset_results_path):
+                continue
+            n = num_rows(n)
+            _num_folds = num_folds(n)
+            _cv_method_name = cv_method_name(n)
+            for k in ks:
+                k_results_path = os.path.join(dataset_results_path, str(k))
+                if not os.path.exists(k_results_path):
+                    continue
+                cv_results_path = os.path.join(k_results_path, 'cv_results.csv')
+                if not os.path.exists(cv_results_path):
+                    continue
+                fs_path = os.path.join(k_results_path, 'fs.csv')
+                if not os.path.exists(fs_path):
+                    continue
+                cv_results = read_cv_results(cv_results_path)
+                fs = read_fs(fs_path)
+                fs_idx = 0
+                for _, cv_row in cv_results.iterrows():
+                    transformer = cv_row['param_fs__transformer']
+                    score_func = cv_row['param_fs__transformer__score_func']
+                    fs_name = fs_method_name(transformer, score_func)
+                    clf = cv_row['param_clf__estimator']
+                    for fold in range(_num_folds):
+                        fs_row = fs.iloc[fs_idx]
+                        fs_scores = fs_row['scores']
+                        fs_features = fs_row['features']
+                        for metric_name in metric_names:
+                            metric_col_name = f'split{fold}_test_{metric_name}'
+                            metric_value = cv_row[metric_col_name]
+                            add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, fold, metric_name,
+                                         metric_value, fs_scores, fs_features)
+                        fs_time = fs_row['times']
+                        add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, fold, 'fs_time',
+                                     fs_time, fs_scores, fs_features)
+                        fs_idx = (fs_idx + 1) % fs.shape[0]
+                    mean_fit_time = cv_row['mean_fit_time']
+                    add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, 'N/A', 'mean_fit_time',
+                                 mean_fit_time, 'N/A', 'N/A')
+    res_df = pd.DataFrame(res_dict)
+    res_df.to_csv('results.csv', index=False)
 
 
 if __name__ == '__main__':
     main()
+
