@@ -35,5 +35,18 @@ def read_fs(path):
     return df
 
 
+def read_cv_results(path):
+    df = pd.read_csv(path)
+    df = df.drop('Unnamed: 0', axis=1)
+    return df
+
+
+def main():
+    path = os.path.join('results', 'alon', '10')
+    fs = read_fs(os.path.join(path, 'fs.csv'))
+    cv_results = read_cv_results(os.path.join(path, 'cv_results.csv'))
+    print(cv_results)
+
+
 if __name__ == '__main__':
-    fs = read_fs(os.path.join('results', 'alon', '10', 'fs.csv'))
+    main()
