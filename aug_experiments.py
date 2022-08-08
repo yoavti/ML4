@@ -8,7 +8,6 @@ import numpy as np
 import pandas as pd
 
 from argparse import ArgumentParser
-from pprint import PrettyPrinter
 
 from data import data_loader
 from experiment_utils.cv import cv_method, num_rows
@@ -22,8 +21,6 @@ from sklearn.base import clone
 from sklearn.preprocessing import LabelEncoder
 
 from imblearn.over_sampling import SMOTE, RandomOverSampler
-
-pp = PrettyPrinter()
 
 fss = {name: SelectKBest(score_func) for name, score_func in named_score_funcs.items()}
 fss['select_fdr'] = SelectFdr(alpha=0.1)
@@ -104,14 +101,15 @@ def create_if_not_exists(path):
 
 def main():
     metric_values = run_aug(args.dataset, fss[args.feature_selection], named_classifiers[args.classifier])
-    pp.pprint(metric_values)
+    metric_values = pd.DataFrame(metric_values)
     results_path = 'results'
     create_if_not_exists(results_path)
     results_path = os.path.join(results_path, args.dataset)
     create_if_not_exists(results_path)
-    results_path = os.path.join(results_path, 'aug.json')
-    with open(results_path, 'w+') as f:
-        json.dump(metric_values, f)
+    results_path = os.path.join(results_path, 'aug')
+    create_if_not_exists(results_path)
+    results_path = os.path.join(results_path, 'results.csv')
+    metric_values.to_csv(results_path, index=False)
 
 
 if __name__ == '__main__':
