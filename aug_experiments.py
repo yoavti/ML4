@@ -107,11 +107,9 @@ def main():
     pp.pprint(metric_values)
     results_path = 'results'
     create_if_not_exists(results_path)
-    results_path = os.path.join(results_path, 'aug')
-    create_if_not_exists(results_path)
     results_path = os.path.join(results_path, args.dataset)
     create_if_not_exists(results_path)
-    results_path = os.path.join(results_path, 'res.json')
+    results_path = os.path.join(results_path, 'aug.json')
     with open(results_path, 'w+') as f:
         json.dump(metric_values, f)
 
