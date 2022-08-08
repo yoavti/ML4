@@ -165,6 +165,51 @@ def main():
     res_df.to_csv('results.csv', index=False)
 
 
+def find_best():
+    best_dict = dict(dataset=[], fs=[], clf=[], k=[])
+    results_path = 'results'
+    directories = [ARFF, bioconductor, Datamicroarray, scikit_feature_datasets]
+    for directory in directories:
+        for dataset in directory.load.datasets:
+            dataset_results_path = os.path.join(results_path, dataset)
+            if not os.path.exists(dataset_results_path):
+                continue
+            best_index = 0
+            best_score = 2
+            best_k = 10
+            for k in ks:
+                k_results_path = os.path.join(dataset_results_path, str(k))
+                if not os.path.exists(k_results_path):
+                    continue
+                best_path = os.path.join(k_results_path, 'best.csv')
+                if not os.path.exists(best_path):
+                    continue
+                with open(best_path, 'r') as f:
+                    best = json.load(f)
+                index = best['index']
+                score = best['score']
+                if score < best_score:
+                    best_index = index
+                    best_score = score
+                    best_k = k
+            k_results_path = os.path.join(dataset_results_path, str(best_k))
+            cv_results_path = os.path.join(k_results_path, 'cv_results.csv')
+            if not os.path.exists(cv_results_path):
+                continue
+            cv_results = read_cv_results(cv_results_path)
+            best_row = cv_results.iloc[best_index]
+            transformer = best_row['param_fs__transformer']
+            score_func = best_row['param_fs__transformer__score_func']
+            fs_name = fs_method_name(transformer, score_func)
+            clf = best_row['param_clf__estimator']
+            best_dict['dataset'].append(dataset)
+            best_dict['fs'].append(fs_name)
+            best_dict['clf'].append(clf)
+            best_dict['k'].append(best_k)
+    best_df = pd.DataFrame(best_dict)
+    best_df.to_csv('best.csv', index=False)
+
+
 if __name__ == '__main__':
     main()
 
