@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 
 from argparse import ArgumentParser
+from time import time
 
 from data import data_loader
 from experiment_utils.cv import cv_method, num_rows
@@ -60,6 +61,7 @@ def run_aug(ds, fs, clf):
 
     metrics = get_metrics()
     metric_values = {name: [] for name in metrics}
+    metric_values['time'] = []
 
     for train_index, test_index in cv_method(n).split(X, y):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
@@ -85,12 +87,15 @@ def run_aug(ds, fs, clf):
         sm = SMOTE()
         X_train, y_train = sm.fit_resample(X_train, y_train)
 
+        start = time()
         clf.fit(X_train, y_train)
+        fit_time = time() - start
 
         y_pred = clf.predict(X_test)
 
         for metric_name, metric in metrics.items():
             metric_values[metric_name].append(metric(y_test, y_pred))
+        metric_values['time'].append(fit_time)
 
     return metric_values
 
@@ -102,7 +107,6 @@ def create_if_not_exists(path):
 
 def main():
     dataset = args.dataset
-    k = args.n_features_to_select
     fs = fss[args.feature_selection]
     clf = named_classifiers[args.classifier]
     parameters = dict(k=args.n_features_to_select, fs=args.feature_selection, clf=args.classifier)
