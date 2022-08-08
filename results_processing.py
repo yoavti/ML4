@@ -159,6 +159,8 @@ def main():
                         add_expr_row(res_dict, dataset, n, d, aug_parameters['fs'], aug_parameters['clf'],
                                      aug_parameters['k'], _cv_method_name, fold, metric_name, metric_value, 'N/A',
                                      'N/A')
+                    add_expr_row(res_dict, dataset, n, d, aug_parameters['fs'], aug_parameters['clf'],
+                                 aug_parameters['k'], _cv_method_name, fold, 'fit_time', row['time'], 'N/A', 'N/A')
     res_df = pd.DataFrame(res_dict)
     res_df.to_csv('results.csv', index=False)
 
