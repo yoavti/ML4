@@ -22,16 +22,17 @@ from sklearn.preprocessing import LabelEncoder
 
 from imblearn.over_sampling import SMOTE, RandomOverSampler
 
-fss = {name: SelectKBest(score_func) for name, score_func in named_score_funcs.items()}
-fss['select_fdr'] = SelectFdr(alpha=0.1)
-
 parser = ArgumentParser(description='Data augmentation experiments.')
 parser.add_argument('-d', '--dataset', type=str, help='dataset')
-parser.add_argument('-fs', '--feature_selection', type=str, choices=list(fss), help='feature selection method')
+parser.add_argument('-fs', '--feature_selection', type=str, choices=list(named_score_funcs) + ['select_fdr'],
+                    help='feature selection method')
 parser.add_argument('-clf', '--classifier', type=str, choices=list(named_classifiers), help='classifier')
 parser.add_argument('-k', '--n_features_to_select', default=10, type=int, choices=ks,
                     help='number of features to select')
 args = parser.parse_args()
+
+fss = {name: SelectKBest(score_func, k=args.n_features_to_select) for name, score_func in named_score_funcs.items()}
+fss['select_fdr'] = SelectFdr(alpha=0.1)
 
 
 def run_aug(ds, fs, clf):
@@ -100,7 +101,11 @@ def create_if_not_exists(path):
 
 
 def main():
-    metric_values = run_aug(args.dataset, fss[args.feature_selection], named_classifiers[args.classifier])
+    dataset = args.dataset
+    k = args.n_features_to_select
+    fs = fss[args.feature_selection]
+    clf = named_classifiers[args.classifier]
+    metric_values = run_aug(dataset, fs, clf)
     metric_values = pd.DataFrame(metric_values)
     results_path = 'results'
     create_if_not_exists(results_path)
