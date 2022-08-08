@@ -105,16 +105,20 @@ def main():
     k = args.n_features_to_select
     fs = fss[args.feature_selection]
     clf = named_classifiers[args.classifier]
+    parameters = dict(k=args.n_features_to_select, fs=args.feature_selection, clf=args.classifier)
     metric_values = run_aug(dataset, fs, clf)
     metric_values = pd.DataFrame(metric_values)
-    results_path = 'results'
-    create_if_not_exists(results_path)
-    results_path = os.path.join(results_path, args.dataset)
-    create_if_not_exists(results_path)
-    results_path = os.path.join(results_path, 'aug')
-    create_if_not_exists(results_path)
-    results_path = os.path.join(results_path, 'results.csv')
+    aug_path = 'results'
+    create_if_not_exists(aug_path)
+    aug_path = os.path.join(aug_path, args.dataset)
+    create_if_not_exists(aug_path)
+    aug_path = os.path.join(aug_path, 'aug')
+    create_if_not_exists(aug_path)
+    results_path = os.path.join(aug_path, 'results.csv')
     metric_values.to_csv(results_path, index=False)
+    parameters_path = os.path.join(aug_path, 'parameters.json')
+    with open(parameters_path, 'w+') as f:
+        json.dump(parameters, f)
 
 
 if __name__ == '__main__':
