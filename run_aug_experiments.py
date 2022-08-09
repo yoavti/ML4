@@ -10,4 +10,5 @@ if __name__ == '__main__':
         command = 'aug_experiments.py'
         for col, arg in col_args_pairs:
             command += f' -{arg} {row[col]}'
+        print(command)
         os.system(command)
