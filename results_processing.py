@@ -140,6 +140,7 @@ def aggregate_results():
                     mean_fit_time = cv_row['mean_fit_time']
                     add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, 'N/A', 'mean_fit_time',
                                  mean_fit_time, 'N/A', 'N/A')
+            aug_dataset = f'{dataset}(aug)'
             aug_path = os.path.join(dataset_results_path, 'aug')
             if not os.path.exists(aug_path):
                 continue
@@ -156,10 +157,10 @@ def aggregate_results():
                 for fold in range(_num_folds):
                     for metric_name in metric_names:
                         metric_value = row[metric_name]
-                        add_expr_row(res_dict, dataset, n, d, aug_parameters['fs'], aug_parameters['clf'],
+                        add_expr_row(res_dict, aug_dataset, n, d, aug_parameters['fs'], aug_parameters['clf'],
                                      aug_parameters['k'], _cv_method_name, fold, metric_name, metric_value, 'N/A',
                                      'N/A')
-                    add_expr_row(res_dict, dataset, n, d, aug_parameters['fs'], aug_parameters['clf'],
+                    add_expr_row(res_dict, aug_dataset, n, d, aug_parameters['fs'], aug_parameters['clf'],
                                  aug_parameters['k'], _cv_method_name, fold, 'fit_time', row['time'], 'N/A', 'N/A')
     res_df = pd.DataFrame(res_dict)
     res_df.to_csv('results.csv', index=False)
