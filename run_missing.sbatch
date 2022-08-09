@@ -17,7 +17,7 @@
 ##SBATCH --mem=32G				### ammount of RAM memory, allocating more than 60G requires IT team's permission
 ##SBATCH --cpus-per-task=6			### number of CPU cores, allocating more than 10G requires IT team's permission
 
-#SBATCH -a 0-19
+#SBATCH -a 1-19
 
 ### Print some data to output file ###
 echo `date`
