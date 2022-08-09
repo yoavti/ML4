@@ -90,7 +90,7 @@ def fs_method_name(transformer, score_func):
     return transformer
 
 
-def main():
+def aggregate_results():
     res_dict = {'Dataset Name': [], 'Number of Samples': [], 'Original Number of Features': [],
                 'Filtering Algorithm': [], 'Learning Algorithm': [], 'Number of Features Selected': [], 'CV Method': [],
                 'Fold': [], 'Measure Type': [], 'Measure Value': [], 'List of Selected Feature Names': [],
@@ -211,5 +211,6 @@ def find_best():
 
 
 if __name__ == '__main__':
-    main()
+    aggregate_results()
+    find_best()
 
