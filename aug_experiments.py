@@ -25,7 +25,7 @@ from imblearn.over_sampling import SMOTE, RandomOverSampler
 
 parser = ArgumentParser(description='Data augmentation experiments.')
 parser.add_argument('-d', '--dataset', type=str, help='dataset')
-parser.add_argument('-fs', '--feature_selection', type=str, choices=list(named_score_funcs) + ['select_fdr'],
+parser.add_argument('-fs', '--feature_selection', type=str, choices=list(named_score_funcs) + ['SelectFdr'],
                     help='feature selection method')
 parser.add_argument('-clf', '--classifier', type=str, choices=list(named_classifiers), help='classifier')
 parser.add_argument('-k', '--n_features_to_select', default=10, type=int, choices=ks,
@@ -33,7 +33,7 @@ parser.add_argument('-k', '--n_features_to_select', default=10, type=int, choice
 args = parser.parse_args()
 
 fss = {name: SelectKBest(score_func, k=args.n_features_to_select) for name, score_func in named_score_funcs.items()}
-fss['select_fdr'] = SelectFdr(alpha=0.1)
+fss['SelectFdr'] = SelectFdr(alpha=0.1)
 
 
 def run_aug(ds, fs, clf):
