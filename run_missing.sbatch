@@ -29,10 +29,7 @@ ROW=${LIST[${SLURM_ARRAY_TASK_ID}]}
 DATASET=$(echo "${ROW}" | cut -d"," -f1)
 K=$(echo "${ROW}" | cut -d"," -f2)
 
-echo "$DATASET"
-echo "$K"
-
 ### Start your code below ####
-#module load anaconda				### load anaconda module (must be present when working with conda environments)
-#source activate ML4
-#python run_experiments.py $DATASET -k 10
+module load anaconda				### load anaconda module (must be present when working with conda environments)
+source activate ML4
+python run_experiments.py "$DATASET" -k "$K"
