@@ -14,11 +14,11 @@ named_score_funcs = {'lfs': lfs,
                      'relief_f': relief_f}
 score_funcs = list(named_score_funcs.values())
 
-named_classifiers = {'knn': KNeighborsClassifier(),
-                     'nb': GaussianNB(),
-                     'lr': LogisticRegression(),
-                     'svc': SVC(),
-                     'rf': RandomForestClassifier()}
+named_classifiers = {'KNeighborsClassifier': KNeighborsClassifier(),
+                     'GaussianNB': GaussianNB(),
+                     'LogisticRegression': LogisticRegression(),
+                     'SVC': SVC(),
+                     'RandomForestClassifier': RandomForestClassifier()}
 classifiers = list(named_classifiers.values())
 
 ks = [1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 50, 100]
