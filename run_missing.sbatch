@@ -28,6 +28,7 @@ LIST=($(<missing.csv))
 ROW=${LIST[${SLURM_ARRAY_TASK_ID}]}
 DATASET=$(echo "${ROW}" | cut -d"," -f1)
 K=$(echo "${ROW}" | cut -d"," -f2)
+K=${K%.*}
 
 ### Start your code below ####
 module load anaconda				### load anaconda module (must be present when working with conda environments)
