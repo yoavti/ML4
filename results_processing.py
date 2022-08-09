@@ -181,7 +181,7 @@ def find_best():
                 k_results_path = os.path.join(dataset_results_path, str(k))
                 if not os.path.exists(k_results_path):
                     continue
-                best_path = os.path.join(k_results_path, 'best.csv')
+                best_path = os.path.join(k_results_path, 'best.json')
                 if not os.path.exists(best_path):
                     continue
                 with open(best_path, 'r') as f:
