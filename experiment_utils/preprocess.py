@@ -8,5 +8,5 @@ def preprocess_steps(d):
            ('var_thresh', VarianceThreshold()),
            ('transform', PowerTransformer())]
     if d >= 1000:
-        ret.append(('ff', SelectKBest(k=d)))
+        ret.append(('ff', SelectKBest(k=1000)))
     return ret
