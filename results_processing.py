@@ -63,8 +63,6 @@ def read_cv_results(path):
     df['param_fs__transformer'] = df['param_fs__transformer'].apply(partial(until, c='('))
 
     df['param_clf__estimator'] = df['param_clf__estimator'].astype(str)
-
-    df['param_clf__estimator'] = df['param_clf__estimator'].astype(str)
     df['param_clf__estimator'] = df['param_clf__estimator'].apply(partial(until, c='()'))
     return df
 
