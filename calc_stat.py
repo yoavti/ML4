@@ -4,12 +4,10 @@ import numpy as np
 import pandas as pd
 
 from functools import partial
-from pprint import PrettyPrinter
+from scipy.stats import friedmanchisquare
 
 from data.experiments import ARFF, bioconductor, Datamicroarray, scikit_feature_datasets
 from experiment_utils.parameters import ks
-
-pp = PrettyPrinter()
 
 
 def func_to_name(func):
@@ -104,6 +102,7 @@ def main():
     scores_dict = gather_scores()
     scores_dict = keep_shared_classifiers(scores_dict)
     scores_arr = np.array([list(classifiers.values()) for classifiers in scores_dict.values()])
+    print(friedmanchisquare(*scores_arr.T))
 
 
 if __name__ == '__main__':
