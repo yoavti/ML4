@@ -103,6 +103,7 @@ def keep_shared_classifiers(scores_dict):
 def main():
     scores_dict = gather_scores()
     scores_dict = keep_shared_classifiers(scores_dict)
+    scores_arr = np.array([list(classifiers.values()) for classifiers in scores_dict.values()])
 
 
 if __name__ == '__main__':
