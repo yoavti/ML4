@@ -39,3 +39,7 @@ def clean():
                     remove_file_if_empty(path)
                 remove_dir_if_empty(k_results_path)
             remove_dir_if_empty(dataset_results_path)
+
+
+if __name__ == '__main__':
+    clean()
