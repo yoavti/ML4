@@ -11,35 +11,27 @@ from experiment_utils.cv import num_rows, num_folds, cv_method_name
 from experiment_utils.metrics import get_metrics
 
 
-def remove_first_char(s):
-    s = s[1:]
-    return s
+def parse_arr(s):
+    s = s[1:-1]
+    return s.split()
 
 
-def replace_whitespace(s, sep=','):
-    values = s.split()
-    s = sep.join(values)
-    return s
+def process_scores(s):
+    scores = parse_arr(s)
+    return ','.join(scores)
 
 
-def remove_quotes(s, sep=','):
-    values = s.split(sep)
-    values = [value[1:-1] for value in values]
-    s = sep.join(values)
-    return s
+def process_features(s):
+    features = parse_arr(s)
+    features = [feature[1:-1] for feature in features]
+    return ','.join(features)
 
 
 def read_fs(path):
     df = pd.read_csv(path)
     df = df.drop('Unnamed: 0', axis=1)
-
-    df['scores'] = df['scores'].apply(remove_first_char)
-    df['scores'] = df['scores'].apply(replace_whitespace)
-
-    df['features'] = df['features'].apply(remove_first_char)
-    df['features'] = df['features'].apply(replace_whitespace)
-    df['features'] = df['features'].apply(remove_quotes)
-
+    df['scores'] = df['scores'].apply(process_scores)
+    df['features'] = df['features'].apply(process_features)
     return df
 
 
@@ -60,6 +52,7 @@ def read_cv_results(path):
     df['param_fs__transformer__score_func'] = df['param_fs__transformer__score_func'].astype(str)
     df['param_fs__transformer__score_func'] = df['param_fs__transformer__score_func'].apply(func_to_name)
 
+    df['param_fs__transformer'] = df['param_fs__transformer'].astype(str)
     df['param_fs__transformer'] = df['param_fs__transformer'].apply(partial(until, c='('))
 
     df['param_clf__estimator'] = df['param_clf__estimator'].astype(str)
@@ -130,10 +123,10 @@ def aggregate_results():
                             metric_col_name = f'split{fold}_test_{metric_name}'
                             metric_value = cv_row[metric_col_name]
                             add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, fold, metric_name,
-                                         metric_value, fs_scores, fs_features)
+                                         metric_value, fs_features, fs_scores)
                         fs_time = fs_row['times']
                         add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, fold, 'fs_time',
-                                     fs_time, fs_scores, fs_features)
+                                     fs_time, fs_features, fs_scores)
                         fs_idx = (fs_idx + 1) % fs.shape[0]
                     mean_fit_time = cv_row['mean_fit_time']
                     add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, 'N/A', 'mean_fit_time',
