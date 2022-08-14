@@ -3,61 +3,11 @@ import json
 
 import pandas as pd
 
-from functools import partial
-
 from data import data_loader
 from experiment_utils.parameters import ks
 from experiment_utils.cv import num_rows, num_folds, cv_method_name
 from experiment_utils.metrics import get_metrics
-
-
-def parse_arr(s):
-    s = s[1:-1]
-    return s.split()
-
-
-def process_scores(s):
-    scores = parse_arr(s)
-    return ','.join(scores)
-
-
-def process_features(s):
-    features = parse_arr(s)
-    features = [feature[1:-1] for feature in features]
-    return ','.join(features)
-
-
-def read_fs(path):
-    df = pd.read_csv(path)
-    df = df.drop('Unnamed: 0', axis=1)
-    df['scores'] = df['scores'].apply(process_scores)
-    df['features'] = df['features'].apply(process_features)
-    return df
-
-
-def func_to_name(func):
-    return func[10:-19]
-
-
-def until(s, c):
-    idx = s.find(c)
-    s = s[:idx]
-    return s
-
-
-def read_cv_results(path):
-    df = pd.read_csv(path)
-    df = df.drop('Unnamed: 0', axis=1)
-
-    df['param_fs__transformer__score_func'] = df['param_fs__transformer__score_func'].astype(str)
-    df['param_fs__transformer__score_func'] = df['param_fs__transformer__score_func'].apply(func_to_name)
-
-    df['param_fs__transformer'] = df['param_fs__transformer'].astype(str)
-    df['param_fs__transformer'] = df['param_fs__transformer'].apply(partial(until, c='('))
-
-    df['param_clf__estimator'] = df['param_clf__estimator'].astype(str)
-    df['param_clf__estimator'] = df['param_clf__estimator'].apply(partial(until, c='()'))
-    return df
+from results_processing_utils.read_csv import read_cv_results, read_fs
 
 
 def add_expr_row(dictionary, dataset, n, d, fs, clf, k, cv, fold, metric_name, metric_value, features, scores):

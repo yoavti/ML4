@@ -1,48 +1,16 @@
 import os
 
 import numpy as np
-import pandas as pd
 
-from functools import partial
 from scipy.stats import friedmanchisquare
 from scikit_posthocs import posthoc_nemenyi_friedman
 
 from data import data_loader
 from experiment_utils.parameters import ks
+from results_processing_utils.read_csv import read_cv_results
 
 
 ALPHA = 0.05
-
-
-def extract_function_name(func):
-    return func[10:-19]
-
-
-def stringify_score_func(s):
-    while all(substr in s for substr in ['<function ', ' at 0x', '>']):
-        start_idx = s.find('<function ')
-        end_idx = s.find('>')
-        func = s[start_idx:end_idx+1]
-        func_name = extract_function_name(func)
-        s = s.replace(func, func_name)
-    return s
-
-
-def until(s, c):
-    idx = s.find(c)
-    s = s[:idx]
-    return s
-
-
-def read_cv_results(path):
-    df = pd.read_csv(path)
-    df = df.drop('Unnamed: 0', axis=1)
-
-    df['param_fs__transformer'] = df['param_fs__transformer'].apply(stringify_score_func)
-
-    df['param_clf__estimator'] = df['param_clf__estimator'].astype(str)
-    df['param_clf__estimator'] = df['param_clf__estimator'].apply(partial(until, c='()'))
-    return df
 
 
 def gather_scores(metric='ROC_AUC'):
@@ -59,7 +27,7 @@ def gather_scores(metric='ROC_AUC'):
             cv_results_path = os.path.join(k_results_path, 'cv_results.csv')
             if not os.path.exists(cv_results_path):
                 continue
-            cv_results = read_cv_results(cv_results_path)
+            cv_results = read_cv_results(cv_results_path, True)
             for _, cv_row in cv_results.iterrows():
                 transformer = cv_row['param_fs__transformer']
                 clf = cv_row['param_clf__estimator']
