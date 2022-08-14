@@ -30,4 +30,4 @@ class ARFFLoader(LabelColumnLoader):
         return X, y
 
 
-arff_loader = ARFFLoader(label_columns)
+arff_loader = ARFFLoader(label_columns, dataset_sizes)

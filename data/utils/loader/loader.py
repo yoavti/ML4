@@ -12,3 +12,6 @@ class Loader:
 
     def available_datasets(self):
         raise NotImplemented
+
+    def dataset_size(self, name):
+        raise NotImplemented

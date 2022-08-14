@@ -37,4 +37,4 @@ class BioconductorLoader(LabelColumnLoader):
         return X, y
 
 
-bioconductor_loader = BioconductorLoader(label_columns)
+bioconductor_loader = BioconductorLoader(label_columns, dataset_sizes)

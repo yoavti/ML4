@@ -42,4 +42,4 @@ class ScikitFeatureLoader(LabelFileLoader):
         return X, Y
 
 
-scikit_feature_loader = ScikitFeatureLoader(datasets)
+scikit_feature_loader = ScikitFeatureLoader(datasets, dataset_sizes)

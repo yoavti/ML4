@@ -19,3 +19,8 @@ class DirLoader(Loader):
 
     def available_datasets(self):
         return sum([loader.available_datasets() for loader in self._loaders], [])
+
+    def dataset_size(self, name):
+        for loader in self._loaders:
+            if loader.is_dataset_available(name):
+                return loader.dataset_size(name)

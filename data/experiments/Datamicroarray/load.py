@@ -38,4 +38,4 @@ class DatamicroarrayLoader(LabelFileLoader):
         return dfs
 
 
-datamicroarray_loader = DatamicroarrayLoader(datasets)
+datamicroarray_loader = DatamicroarrayLoader(datasets, dataset_sizes)
