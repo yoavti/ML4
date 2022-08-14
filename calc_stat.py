@@ -7,7 +7,7 @@ from functools import partial
 from scipy.stats import friedmanchisquare
 from scikit_posthocs import posthoc_nemenyi_friedman
 
-from data.experiments import ARFF, bioconductor, Datamicroarray, scikit_feature_datasets
+from data import data_loader
 from experiment_utils.parameters import ks
 
 
@@ -48,30 +48,28 @@ def read_cv_results(path):
 def gather_scores(metric='ROC_AUC'):
     scores_dict = {}
     results_path = 'results'
-    directories = [ARFF, bioconductor, Datamicroarray, scikit_feature_datasets]
-    for directory in directories:
-        for dataset in directory.load.datasets:
-            dataset_results_path = os.path.join(results_path, dataset)
-            if not os.path.exists(dataset_results_path):
+    for dataset in data_loader.available_datasets():
+        dataset_results_path = os.path.join(results_path, dataset)
+        if not os.path.exists(dataset_results_path):
+            continue
+        for k in ks:
+            k_results_path = os.path.join(dataset_results_path, str(k))
+            if not os.path.exists(k_results_path):
                 continue
-            for k in ks:
-                k_results_path = os.path.join(dataset_results_path, str(k))
-                if not os.path.exists(k_results_path):
+            cv_results_path = os.path.join(k_results_path, 'cv_results.csv')
+            if not os.path.exists(cv_results_path):
+                continue
+            cv_results = read_cv_results(cv_results_path)
+            for _, cv_row in cv_results.iterrows():
+                transformer = cv_row['param_fs__transformer']
+                clf = cv_row['param_clf__estimator']
+                meta_clf = f'{transformer}->{clf}'
+                score = cv_row[f'mean_test_{metric}']
+                if np.isnan(score):
                     continue
-                cv_results_path = os.path.join(k_results_path, 'cv_results.csv')
-                if not os.path.exists(cv_results_path):
-                    continue
-                cv_results = read_cv_results(cv_results_path)
-                for _, cv_row in cv_results.iterrows():
-                    transformer = cv_row['param_fs__transformer']
-                    clf = cv_row['param_clf__estimator']
-                    meta_clf = f'{transformer}->{clf}'
-                    score = cv_row[f'mean_test_{metric}']
-                    if np.isnan(score):
-                        continue
-                    if dataset not in scores_dict:
-                        scores_dict[dataset] = {}
-                    scores_dict[dataset][meta_clf] = score
+                if dataset not in scores_dict:
+                    scores_dict[dataset] = {}
+                scores_dict[dataset][meta_clf] = score
     return scores_dict
 
 
