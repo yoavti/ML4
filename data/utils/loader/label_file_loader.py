@@ -6,7 +6,7 @@ class LabelFileLoader(Loader):
         self._datasets = set(datasets)
         self._dataset_sizes = dataset_sizes
 
-    def is_dataset_available(self, name, parent=''):
+    def is_dataset_available(self, name):
         return name in self._datasets
 
     def available_datasets(self):

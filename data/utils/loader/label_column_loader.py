@@ -6,7 +6,7 @@ class LabelColumnLoader(Loader):
         self._label_columns = label_columns
         self._dataset_sizes = dataset_sizes
 
-    def is_dataset_available(self, name, parent=''):
+    def is_dataset_available(self, name):
         return name in self._label_columns
 
     def available_datasets(self):

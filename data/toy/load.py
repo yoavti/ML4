@@ -13,7 +13,7 @@ class ToyLoader(Loader):
         X, y = split_X_y(df, 0)
         return X, y
 
-    def is_dataset_available(self, name, parent=''):
+    def is_dataset_available(self, name):
         return name == 'toy'
 
     def available_datasets(self):
