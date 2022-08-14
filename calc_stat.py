@@ -5,13 +5,13 @@ import pandas as pd
 
 from functools import partial
 from scipy.stats import friedmanchisquare
+from scikit_posthocs import posthoc_nemenyi_friedman
 
 from data.experiments import ARFF, bioconductor, Datamicroarray, scikit_feature_datasets
 from experiment_utils.parameters import ks
 
 
-def func_to_name(func):
-    return func[10:-19]
+ALPHA = 0.05
 
 
 def extract_function_name(func):
@@ -95,14 +95,23 @@ def keep_shared_classifiers(scores_dict):
                              if classifier in chosen_classifiers}
                    for dataset, classifiers in scores_dict.items()
                    if dataset in chosen_datasets}
-    return scores_dict
+    return scores_dict, chosen_classifiers
 
 
 def main():
     scores_dict = gather_scores()
-    scores_dict = keep_shared_classifiers(scores_dict)
-    scores_arr = np.array([list(classifiers.values()) for classifiers in scores_dict.values()])
-    print(friedmanchisquare(*scores_arr.T))
+    scores_dict, shared_classifiers = keep_shared_classifiers(scores_dict)
+    scores_arr = np.array([[classifier_scores[classifier]
+                            for classifier in shared_classifiers]
+                           for classifier_scores in scores_dict.values()])
+    statistic, pvalue = friedmanchisquare(*scores_arr.T)
+    print(pvalue)
+    if pvalue < ALPHA:
+        df = posthoc_nemenyi_friedman(scores_arr)
+        df = df.rename(dict(enumerate(shared_classifiers)))
+        df = df.T
+        df = df.rename(dict(enumerate(shared_classifiers)))
+        df.to_csv('post_hoc.csv')
 
 
 if __name__ == '__main__':
