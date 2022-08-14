@@ -64,7 +64,7 @@ def keep_shared_classifiers(scores_dict):
     return scores_dict, chosen_classifiers
 
 
-def main():
+def statistical_tests():
     scores_dict = gather_scores()
     scores_dict, shared_classifiers = keep_shared_classifiers(scores_dict)
     scores_arr = np.array([[classifier_scores[classifier]
@@ -80,4 +80,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    statistical_tests()
