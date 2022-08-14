@@ -127,16 +127,14 @@ def improvement():
     return res_dict
 
 
-def present_results(func):
-    print(func.__name__)
+def save_results(func):
     for dataset, df in func().items():
-        print(dataset)
-        print(df)
+        df.to_csv(f'{func}_{dataset}.csv')
 
 
 def main():
-    present_results(aug)
-    present_results(improvement)
+    save_results(aug)
+    save_results(improvement)
 
 
 if __name__ == '__main__':
