@@ -129,7 +129,7 @@ def improvement():
 
 def save_results(func):
     for dataset, df in func().items():
-        df.to_csv(f'{func}_{dataset}.csv')
+        df.to_csv(f'{func.__name__}_{dataset}.csv')
 
 
 def main():
