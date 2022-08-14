@@ -7,3 +7,6 @@ class LabelFileLoader(Loader):
 
     def is_dataset_available(self, name, parent=''):
         return name in self._datasets
+
+    def available_datasets(self):
+        return list(self._datasets)

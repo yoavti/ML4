@@ -16,3 +16,6 @@ class DirLoader(Loader):
     def is_dataset_available(self, name, parent=''):
         child_dir = os.path.join(parent, self._directory)
         return any(loader.is_dataset_available(name, child_dir) for loader in self._loaders)
+
+    def available_datasets(self):
+        return sum([loader.available_datasets() for loader in self._loaders], [])

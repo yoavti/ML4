@@ -16,5 +16,8 @@ class ToyLoader(Loader):
     def is_dataset_available(self, name, parent=''):
         return name == 'toy'
 
+    def available_datasets(self):
+        return ['toy']
+
 
 toy_loader = ToyLoader('SPECTF.train')
