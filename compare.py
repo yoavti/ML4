@@ -99,10 +99,10 @@ def save_results(func):
         df.to_csv(f'{func.__name__}_{dataset}.csv')
 
 
-def main():
+def compare():
     save_results(aug)
     save_results(improvement)
 
 
 if __name__ == '__main__':
-    main()
+    compare()
