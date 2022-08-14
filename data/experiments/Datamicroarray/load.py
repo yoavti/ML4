@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from data.utils import LabelFileLoader
+from data.utils import FileLoader
 
 
 purposes = ['inputs', 'outputs']
@@ -31,7 +31,7 @@ dataset_sizes = {'alon': (2000, 62),
                  'yeoh': (12625, 248)}
 
 
-class DatamicroarrayLoader(LabelFileLoader):
+class DatamicroarrayLoader(FileLoader):
     def _load(self, name, parent=''):
         paths = [os.path.join(parent, 'Datamicroarray', name, f'{purpose}.csv') for purpose in purposes]
         dfs = [pd.read_csv(path, header=None) for path in paths]

@@ -1,6 +1,6 @@
 from scipy.io import loadmat
 import os
-from data.utils import LabelFileLoader
+from data.utils import FileLoader
 
 
 datasets = ['lung_small', 'Yale', 'ORL', 'colon', 'warpAR10P', 'warpPIE10P', 'PCMAC', 'lung', 'lymphoma', 'RELATHE',
@@ -32,7 +32,7 @@ dataset_sizes = {'ALLAML': (7129, 72),
                  'Yale': (1024, 165)}
 
 
-class ScikitFeatureLoader(LabelFileLoader):
+class ScikitFeatureLoader(FileLoader):
     def _load(self, name, parent=''):
         path = os.path.join(parent, 'scikit_feature_datasets', f'{name}.mat')
         mat = loadmat(path)

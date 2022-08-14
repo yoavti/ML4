@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
-from data.utils import split_X_y, LabelColumnLoader
+from data.utils import split_X_y, FileLoader
 
 
 datasets = ['DLBCL', 'curatedOvarianData', 'ayeastCC', 'bcellViper', 'CLL', 'ALL', 'COPDSexualDimorphism.data',
@@ -28,12 +28,12 @@ dataset_sizes = {'ALL': (12625, 128),
                  'leukemiasEset': (20172, 60)}
 
 
-class BioconductorLoader(LabelColumnLoader):
+class BioconductorLoader(FileLoader):
     def _load(self, name, parent=''):
         path = os.path.join(parent, 'bioconductor', f'{name}.csv')
         df = pd.read_csv(path, index_col=0, header=None, low_memory=False).T
         df = df.drop(np.nan, axis=1)
-        X, y = split_X_y(df, self._label_columns[name])
+        X, y = split_X_y(df, self._datasets[name])
         return X, y
 
 
