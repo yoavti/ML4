@@ -10,7 +10,7 @@ class DirLoader(Loader):
     def _load(self, name, parent=''):
         child_dir = os.path.join(parent, self._directory)
         for loader in self._loaders:
-            if loader.is_dataset_available(name, child_dir):
+            if loader.is_dataset_available(name):
                 return loader.load(name, child_dir)
 
     def is_dataset_available(self, name):
