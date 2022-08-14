@@ -74,9 +74,6 @@ def improvement():
             cv_results_path = os.path.join(k_results_path, 'cv_results.csv')
             if not os.path.exists(cv_results_path):
                 continue
-            fs_path = os.path.join(k_results_path, 'fs.csv')
-            if not os.path.exists(fs_path):
-                continue
             cv_results = read_cv_results(cv_results_path)
             cv_results = cv_results[list(columns_mapping) + param_columns]
             cv_results = cv_results[cv_results['param_fs__transformer'] == 'SelectKBest']
