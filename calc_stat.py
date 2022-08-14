@@ -109,8 +109,7 @@ def main():
     if pvalue < ALPHA:
         df = posthoc_nemenyi_friedman(scores_arr)
         df = df.rename(dict(enumerate(shared_classifiers)))
-        df = df.T
-        df = df.rename(dict(enumerate(shared_classifiers)))
+        df = df.rename(dict(enumerate(shared_classifiers)), axis=1)
         df.to_csv('post_hoc.csv')
 
 
