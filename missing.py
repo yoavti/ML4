@@ -35,6 +35,7 @@ def find_missing():
                 path = os.path.join(k_results_path, file)
                 if not os.path.exists(path):
                     add_dict_row(missing_dict, dataset, k)
+                    break
     missing_df = pd.DataFrame(missing_dict)
     missing_df.to_csv('missing.csv', index=False)
 
