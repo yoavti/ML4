@@ -67,12 +67,10 @@ def keep_shared_classifiers(scores_dict):
 def statistical_tests():
     scores_dict = gather_scores()
     scores_dict, shared_classifiers = keep_shared_classifiers(scores_dict)
-    print(shared_classifiers)
     columns_mapping = dict(enumerate(shared_classifiers))
     scores_arr = np.array([[classifier_scores[classifier]
                             for classifier in shared_classifiers]
                            for classifier_scores in scores_dict.values()])
-    print(scores_arr)
     statistic, pvalue = friedmanchisquare(*scores_arr.T)
     print(pvalue)
     if pvalue < ALPHA:
