@@ -31,7 +31,7 @@ def gather_scores(metric='ROC_AUC'):
             for _, cv_row in cv_results.iterrows():
                 transformer = cv_row['param_fs__transformer']
                 clf = cv_row['param_clf__estimator']
-                meta_clf = f'{transformer}->{clf}'
+                meta_clf = (transformer, clf)
                 score = cv_row[f'mean_test_{metric}']
                 if np.isnan(score):
                     continue
@@ -50,10 +50,10 @@ def keep_shared_classifiers(scores_dict):
         if not chosen_datasets:
             chosen_datasets.add(dataset)
             chosen_classifiers = classifiers_to_add
-        classifiers_to_add = classifiers_to_add
         new_intersection = chosen_classifiers.intersection(classifiers_to_add)
-        if not new_intersection:
-            break
+        new_fs = {fs for fs, _ in new_intersection}
+        if not new_intersection or len(new_fs) < 2:
+            continue
         chosen_datasets.add(dataset)
         chosen_classifiers = new_intersection
     scores_dict = {dataset: {classifier: score
@@ -67,15 +67,18 @@ def keep_shared_classifiers(scores_dict):
 def statistical_tests():
     scores_dict = gather_scores()
     scores_dict, shared_classifiers = keep_shared_classifiers(scores_dict)
+    print(shared_classifiers)
+    columns_mapping = dict(enumerate(shared_classifiers))
     scores_arr = np.array([[classifier_scores[classifier]
                             for classifier in shared_classifiers]
                            for classifier_scores in scores_dict.values()])
+    print(scores_arr)
     statistic, pvalue = friedmanchisquare(*scores_arr.T)
     print(pvalue)
     if pvalue < ALPHA:
         df = posthoc_nemenyi_friedman(scores_arr)
-        df = df.rename(dict(enumerate(shared_classifiers)))
-        df = df.rename(dict(enumerate(shared_classifiers)), axis=1)
+        df = df.rename(columns_mapping)
+        df = df.rename(columns_mapping, axis=1)
         df.to_csv('post_hoc.csv')
 
 
