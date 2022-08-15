@@ -105,11 +105,10 @@ def create_if_not_exists(path):
         os.mkdir(path)
 
 
-def main():
-    dataset = args.dataset
-    fs = fss[args.feature_selection]
-    clf = named_classifiers[args.classifier]
-    parameters = dict(k=args.n_features_to_select, fs=args.feature_selection, clf=args.classifier)
+def run_and_save_aug(dataset, feature_selection, classifier, k):
+    fs = fss[feature_selection]
+    clf = named_classifiers[classifier]
+    parameters = dict(k=k, fs=feature_selection, clf=classifier)
     metric_values = run_aug(dataset, fs, clf)
     metric_values = pd.DataFrame(metric_values)
     aug_path = 'results'
@@ -125,5 +124,16 @@ def main():
         json.dump(parameters, f)
 
 
+def run_args():
+    run_and_save_aug(args.dataset, args.feature_selection, args.classifier, args.n_features_to_select)
+
+
+def run_best():
+    df = pd.read_csv('best.csv')
+    for _, row in df.iterrows():
+        print(row['dataset'], row['fs'], row['clf'], row['k'])
+        run_and_save_aug(row['dataset'], row['fs'], row['clf'], row['k'])
+
+
 if __name__ == '__main__':
-    main()
+    run_best()
