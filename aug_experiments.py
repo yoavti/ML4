@@ -81,11 +81,12 @@ def run_aug(ds, fs, clf):
         X_train = np.hstack([X_train] + [X for X in reduced_X_trains])
         X_test = np.hstack([X_test] + [X for X in reduced_X_tests])
 
-        over_sampler = RandomOverSampler()
-        X_train, y_train = over_sampler.fit_resample(X_train, y_train)
+        if np.unique(y).size > 1:
+            over_sampler = RandomOverSampler()
+            X_train, y_train = over_sampler.fit_resample(X_train, y_train)
 
-        sm = SMOTE()
-        X_train, y_train = sm.fit_resample(X_train, y_train)
+            sm = SMOTE()
+            X_train, y_train = sm.fit_resample(X_train, y_train)
 
         start = time()
         clf.fit(X_train, y_train)
@@ -113,7 +114,7 @@ def run_and_save_aug(dataset, feature_selection, classifier, k):
     metric_values = pd.DataFrame(metric_values)
     aug_path = 'results'
     create_if_not_exists(aug_path)
-    aug_path = os.path.join(aug_path, args.dataset)
+    aug_path = os.path.join(aug_path, dataset)
     create_if_not_exists(aug_path)
     aug_path = os.path.join(aug_path, 'aug')
     create_if_not_exists(aug_path)
@@ -131,7 +132,7 @@ def run_args():
 def run_best():
     df = pd.read_csv('best.csv')
     for _, row in df.iterrows():
-        print(row['dataset'], row['fs'], row['clf'], row['k'])
+        print(row)
         run_and_save_aug(row['dataset'], row['fs'], row['clf'], row['k'])
 
 
