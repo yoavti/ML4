@@ -14,6 +14,7 @@ All files in this category require no arguments. Simply execute them for them to
 * `clean.py`: Removes empty files and folders.
 * `compare.py`: Compares both aug experiments to original corresponding experiments, and our improvement to the original algorithm.
 * `missing.py`: Finds any missing configurations not covered by results.
+* `preprocessed_results.py`: Copies results of fs preprocessing to separate folder.
 * `results_processing_pipeline.py`: Combines all post-processing steps, as well as the aug experiments.
 
 # SBATCH Scripts
