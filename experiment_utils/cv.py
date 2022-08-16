@@ -30,13 +30,3 @@ def num_folds(n):
     elif 100 <= n < 1000:
         return 10
     return 5
-
-
-def num_rows(n):
-    if n < 50:
-        return n
-    elif 50 <= n < 100:
-        return 50
-    elif 100 <= n < 1000:
-        return 100
-    return 1000

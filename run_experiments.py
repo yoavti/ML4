@@ -11,7 +11,7 @@ from model_selection import ClassifierSwitcher, FSSwitcher, fs_results
 from data import data_loader
 
 from experiment_utils.preprocess import preprocess_steps
-from experiment_utils.cv import cv_method, num_rows
+from experiment_utils.cv import cv_method
 from experiment_utils.metrics import get_metrics
 from experiment_utils.parameters import score_funcs, ks, classifiers
 
@@ -36,10 +36,10 @@ parameters = [
         'fs__transformer__score_func': score_funcs,
         'clf__estimator': classifiers,
     },
-    # {
-    #     'fs__transformer': [SelectFdr(alpha=0.1)],
-    #     'clf__estimator': classifiers,
-    # },
+    {
+        'fs__transformer': [SelectFdr(alpha=0.1)],
+        'clf__estimator': classifiers,
+    },
 ]
 
 
@@ -51,12 +51,6 @@ def create_if_not_exists(path):
 def run_experiment(ds):
     X, y = data_loader.load(ds)
     y = LabelEncoder().fit_transform(y)
-
-    n, d = X.shape
-
-    _num_rows = num_rows(n)
-    X = X[:_num_rows]
-    y = y[:_num_rows]
 
     n, d = X.shape
 
