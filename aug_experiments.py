@@ -11,7 +11,7 @@ from argparse import ArgumentParser
 from time import time
 
 from data import data_loader
-from experiment_utils.cv import cv_method, num_rows
+from experiment_utils.cv import cv_method
 from experiment_utils.metrics import get_metrics
 from experiment_utils.parameters import named_score_funcs, named_classifiers, ks
 from experiment_utils.preprocess import preprocess_steps
@@ -50,18 +50,13 @@ def run_aug(ds, fs, clf):
 
     n, d = X.shape
 
-    _num_rows = num_rows(n)
-    X = X[:_num_rows]
-    y = y[:_num_rows]
-
-    n, d = X.shape
-
     if isinstance(X, np.ndarray):
         X = pd.DataFrame(X, index=None, columns=None)
 
     metrics = get_metrics()
     metric_values = {name: [] for name in metrics}
-    metric_values['time'] = []
+    for t in ['fit', 'score']:
+        metric_values[f'{t}_time'] = []
 
     for train_index, test_index in cv_method(n).split(X, y):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
@@ -92,11 +87,14 @@ def run_aug(ds, fs, clf):
         clf.fit(X_train, y_train)
         fit_time = time() - start
 
+        start = time()
         y_pred = clf.predict(X_test)
+        score_time = time() - start
 
         for metric_name, metric in metrics.items():
             metric_values[metric_name].append(metric(y_test, y_pred))
-        metric_values['time'].append(fit_time)
+        metric_values['fit_time'].append(fit_time)
+        metric_values['score_time'].append(score_time)
 
     return metric_values
 
