@@ -5,7 +5,7 @@ import pandas as pd
 
 from data import data_loader
 from experiment_utils.parameters import ks
-from experiment_utils.cv import num_rows, num_folds, cv_method_name
+from experiment_utils.cv import num_folds, cv_method_name
 from experiment_utils.metrics import get_metrics
 from results_processing_utils.read_csv import read_cv_results, read_fs
 
@@ -43,7 +43,6 @@ def aggregate_results():
         dataset_results_path = os.path.join(results_path, dataset)
         if not os.path.exists(dataset_results_path):
             continue
-        n = num_rows(n)
         _num_folds = num_folds(n)
         _cv_method_name = cv_method_name(n)
         for k in ks:
@@ -77,9 +76,11 @@ def aggregate_results():
                     add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, fold, 'fs_time',
                                  fs_time, fs_features, fs_scores)
                     fs_idx = (fs_idx + 1) % fs.shape[0]
-                mean_fit_time = cv_row['mean_fit_time']
-                add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, 'N/A', 'mean_fit_time',
-                             mean_fit_time, 'N/A', 'N/A')
+                for time in ['fit', 'score']:
+                    column = f'mean_{time}_time'
+                    mean_time = cv_row[column]
+                    add_expr_row(res_dict, dataset, n, d, fs_name, clf, k, _cv_method_name, 'N/A', column, mean_time,
+                                 'N/A', 'N/A')
         aug_path = os.path.join(dataset_results_path, 'aug')
         if not os.path.exists(aug_path):
             continue
@@ -101,8 +102,10 @@ def aggregate_results():
                     metric_value = row[metric_name]
                     add_expr_row(res_dict, dataset, n, d, aug_fs, aug_clf, aug_k, _cv_method_name, fold,
                                  metric_name, metric_value, 'N/A', 'N/A')
-                add_expr_row(res_dict, dataset, n, d, aug_fs, aug_clf, aug_k, _cv_method_name, fold, 'fit_time',
-                             row['time'], 'N/A', 'N/A')
+                for time in ['fit', 'score']:
+                    column = f'{time}_time'
+                    add_expr_row(res_dict, dataset, n, d, aug_fs, aug_clf, aug_k, _cv_method_name, fold, column,
+                                 row[column], 'N/A', 'N/A')
     res_df = pd.DataFrame(res_dict)
     res_df.to_csv('results.csv', index=False)
 
@@ -115,7 +118,7 @@ def find_best():
         if not os.path.exists(dataset_results_path):
             continue
         best_index = 0
-        best_score = 2
+        best_score = 0
         best_k = 10
         for k in ks:
             k_results_path = os.path.join(dataset_results_path, str(k))
@@ -128,7 +131,7 @@ def find_best():
                 best = json.load(f)
             index = best['index']
             score = best['score']
-            if score < best_score:
+            if best_score < score:
                 best_index = index
                 best_score = score
                 best_k = k
