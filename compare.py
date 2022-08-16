@@ -19,7 +19,8 @@ def aug():
     results_path = 'results'
     metric_names = list(get_metrics())
     columns_mapping = {f'mean_test_{metric}': metric for metric in metric_names}
-    columns_mapping['mean_fit_time'] = 'time'
+    for time in ['fit', 'score']:
+        columns_mapping[f'mean_{time}_time'] = f'{time}_time'
     for dataset in data_loader.available_datasets():
         dataset_results_path = os.path.join(results_path, dataset)
         if not os.path.exists(dataset_results_path):
